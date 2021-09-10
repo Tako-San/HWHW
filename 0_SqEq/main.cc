@@ -8,17 +8,20 @@ void print_greeting();
 int print_exit_msg(const char *msg);
 
 int main() {
+  if (!unit_testing())
+    return print_exit_msg("Unit tests not passed");
+
   print_greeting();
 
   double coeffs[COEFF_NUM] = {};
   if (!read_coeffs("Input 3 coefficients:", coeffs))
-    return print_exit_msg("Input finished with error\n");
+    return print_exit_msg("Input finished with error");
 
   double results[MAX_ROOT_NUM] = {};
   int res_type = solve_sqeq(coeffs, results);
 
   print_res(res_type, results);
-  return 0;
+  return ret_code(res_type);
 }
 
 void print_greeting() {
@@ -28,6 +31,6 @@ void print_greeting() {
 
 int print_exit_msg(const char *msg) {
   puts(msg);
-  puts("Exiting...\n");
+  puts("Exiting...");
   return SQEQ_ERROR;
 }
