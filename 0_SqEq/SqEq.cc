@@ -1,7 +1,7 @@
 /**
  * @file SqEq.cc
  * @author Tako
- * @brief file with realisations
+ * @brief File with most important SqEq functions
  */
 
 #include <assert.h>
@@ -17,11 +17,12 @@ bool read_coeffs(const char *prompt, double coeffs[COEFF_NUM]) {
 }
 
 int solve_sqeq(const double coeffs[COEFF_NUM], double results[MAX_ROOT_NUM]) {
-  assert(nullptr != coeffs);
-  assert(nullptr != results);
+  if ((nullptr == coeffs) || (nullptr == results))
+    return RT_NULLPTR_ERROR;
 
   double a = coeffs[0], b = coeffs[1], c = coeffs[2];
-  assert(isfinite(a) && isfinite(b) && isfinite(c));
+  if (!(isfinite(a) && isfinite(b) && isfinite(c)))
+    return RT_INV_COEFF_ERROR;
 
   if (is_equal(a, 0))
     return (solve_linear(b, c, results));
@@ -70,6 +71,7 @@ int solve_linear(double b, double c, double *x_ptr) {
 int is_equal(double n1, double n2) { return (fabs(n1 - n2) < EPS); }
 
 void print_res(int res_type, const double results[MAX_ROOT_NUM]) {
+  printf("Answer:\n");
   switch (res_type) {
   case RT_NO_ROOTS:
     printf("No roots\n");
@@ -83,6 +85,12 @@ void print_res(int res_type, const double results[MAX_ROOT_NUM]) {
   case RT_INF_ROOTS:
     printf("Infinite number of roots\n");
     break;
+  case RT_INV_COEFF_ERROR:
+    printf("INVALID COEFFICIENT VALUE\n");
+    break;
+  case RT_NULLPTR_ERROR:
+    printf("COEFF OR ROOT ARRAY IS NULLPTR\n");
+    break;
   case RT_ERROR:
     printf("ERROR\n");
     break;
@@ -91,3 +99,5 @@ void print_res(int res_type, const double results[MAX_ROOT_NUM]) {
     break;
   }
 }
+
+int ret_code(int res_type) { return (res_type >= RT_VALID) ? 0 : SQEQ_ERROR; }

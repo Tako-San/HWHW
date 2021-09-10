@@ -1,5 +1,3 @@
-#include <stdbool.h>
-
 /**
  * @brief return this from main on error
  */
@@ -23,12 +21,21 @@
 /**
  * @brief enum with result types of solve functions
  */
+enum ResType {
+  RT_ERROR, // Errors from here
+  RT_INV_COEFF_ERROR,
+  RT_NULLPTR_ERROR,
 
-enum ResType { RT_ERROR = -1, RT_NO_ROOTS, RT_ONE_ROOT, RT_TWO_ROOTS, RT_INF_ROOTS };
+  RT_VALID, // Valid codes from here
+  RT_NO_ROOTS,
+  RT_ONE_ROOT,
+  RT_TWO_ROOTS,
+  RT_INF_ROOTS
+};
 
 /**
  * @brief Reading 3 coefficients from stdin
- * 
+ *
  * @param[in] prompt message to user
  * @param[out] coeffs array for coeffs, length must be >= 3
  * @return true if all OK
@@ -38,7 +45,7 @@ bool read_coeffs(const char *prompt, double coeffs[COEFF_NUM]);
 
 /**
  * @brief Print squaree equations roots
- * 
+ *
  * @param[in] res_type defines error/number of roots
  * @param[in] results roots
  */
@@ -46,7 +53,7 @@ void print_res(int res_type, const double results[MAX_ROOT_NUM]);
 
 /**
  * @brief Solving square equation
- * 
+ *
  * @param[in] coeffs array with coefficients, length must must be >= 3
  * @param[out] results array with roots, length must must be >= 2
  * @return result type
@@ -55,7 +62,7 @@ int solve_sqeq(const double coeffs[COEFF_NUM], double results[MAX_ROOT_NUM]);
 
 /**
  * @brief Solving linear equation
- * 
+ *
  * @param[in] b coeff on x
  * @param[in] c free member
  * @param[out] x_ptr result pointer
@@ -65,9 +72,25 @@ int solve_linear(double b, double c, double *x_ptr);
 
 /**
  * @brief Compares two double numbers
- * 
+ *
  * @param[in] n1 1st num
  * @param[in] n2 2nd num
- * @return int 
+ * @return int
  */
 int is_equal(double n1, double n2);
+
+/**
+ * @brief Generate program return code
+ *
+ * @param[in] res_type value returned by solve function
+ * @return int
+ */
+int ret_code(int res_type);
+
+/**
+ * @brief Testing SqEq functions
+ * 
+ * @return true if all tests passed
+ * @return false if tests not passed
+ */
+bool unit_testing();
