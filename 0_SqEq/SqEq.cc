@@ -32,13 +32,13 @@ int solve_sqeq(const double coeffs[COEFF_NUM], double results[MAX_ROOT_NUM]) {
 
   else {
     double d = b * b - 4 * a * c;
-    if (d < 0)
-      return RT_NO_ROOTS;
 
-    else if (is_equal(d, 0)) {
+    if (is_equal(d, 0)) {
       results[0] = -b / (2 * a);
       results[1] = NAN;
       return RT_ONE_ROOT;
+    } else if (d < 0) {
+      return RT_NO_ROOTS;
     } else if (d > 0) {
       double sqrt_d = sqrt(d);
       results[0] = (-b + sqrt_d) / (2 * a);
@@ -50,12 +50,9 @@ int solve_sqeq(const double coeffs[COEFF_NUM], double results[MAX_ROOT_NUM]) {
 }
 
 int solve_linear(double b, double c, double *x_ptr) {
-  if (is_equal(b, 0)) {
-    if (is_equal(c, 0))
-      return RT_INF_ROOTS;
-    else
-      return RT_NO_ROOTS;
-  } else if (is_equal(c, 0)) {
+  if (is_equal(b, 0))
+    return is_equal(c, 0) ? RT_INF_ROOTS : RT_NO_ROOTS;
+  else if (is_equal(c, 0)) {
     *x_ptr = 0;
     return RT_ONE_ROOT;
   } else {
