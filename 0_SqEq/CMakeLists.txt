@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 # set the project name
 project(SqEq VERSION 1.0)
 
+# configure header for version print
 configure_file(SqEqConfig.h.in SqEqConfig.h)
 
 # first we can indicate the documentation build as an option and set it to ON by default
@@ -28,9 +29,6 @@ if (DOXYGEN_FOUND)
 else (DOXYGEN_FOUND)
   message("Doxygen need to be installed to generate the doxygen documentation")
 endif (DOXYGEN_FOUND)
-
-
-
 
 # add the executable
 add_executable(SqEq main.cc SqEq.cc)

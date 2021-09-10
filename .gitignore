@@ -37,3 +37,6 @@
 # .vscode directories
 */.vscode/
 
+# Documentation directories
+*/docs/
+
