@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # set the project name
-project(SqEq VERSION 1.0)
+project(SqEq VERSION 1.1)
 
 # configure header for version print
 configure_file(SqEqConfig.h.in SqEqConfig.h)
