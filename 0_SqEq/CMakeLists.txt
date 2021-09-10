@@ -31,6 +31,7 @@ endif (DOXYGEN_FOUND)
 
 
 
+
 # add the executable
 add_executable(SqEq main.cc SqEq.cc)
 

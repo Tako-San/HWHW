@@ -23,6 +23,7 @@
 /**
  * @brief enum with result types of solve functions
  */
+
 enum ResType { RT_ERROR = -1, RT_NO_ROOTS, RT_ONE_ROOT, RT_TWO_ROOTS, RT_INF_ROOTS };
 
 /**
