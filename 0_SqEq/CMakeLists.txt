@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.10)
+
+# set the project name
+project(SqEq VERSION 1.0)
+
+configure_file(SqEqConfig.h.in SqEqConfig.h)
+configure_file(Doxyfile.txt Doxyfile)
+
+# add the executable
+add_executable(SqEq main.cc SqEq.cc)
+
+
+# add the binary tree to the search path for include files
+# so that we will find SqEqConfig.h
+target_include_directories(SqEq PUBLIC "${PROJECT_BINARY_DIR}")
+
+# add warnings and sanitizers
+target_compile_options(SqEq INTERFACE "-Wall -Wextra -fsanitize=addres,undefined")
