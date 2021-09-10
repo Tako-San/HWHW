@@ -1,3 +1,9 @@
+/**
+ * @file SqEq.cc
+ * @author Tako
+ * @brief file with realisations
+ */
+
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
