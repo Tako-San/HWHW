@@ -31,7 +31,7 @@ else (DOXYGEN_FOUND)
 endif (DOXYGEN_FOUND)
 
 # add the executable
-add_executable(SqEq main.cc SqEq.cc)
+add_executable(SqEq main.cc SqEq.cc tests.cc)
 
 # add the binary tree to the search path for include files
 # so that we will find SqEqConfig.h

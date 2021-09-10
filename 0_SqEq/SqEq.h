@@ -1,5 +1,3 @@
-#include <stdbool.h>
-
 /**
  * @brief return this from main on error
  */
