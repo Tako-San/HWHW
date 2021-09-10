@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(SqEq VERSION 1.0)
 
 configure_file(SqEqConfig.h.in SqEqConfig.h)
+configure_file(Doxyfile.txt Doxyfile)
 
 # add the executable
 add_executable(SqEq main.cc SqEq.cc)
