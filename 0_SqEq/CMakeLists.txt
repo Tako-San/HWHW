@@ -6,7 +6,7 @@ project(SqEq VERSION 1.0)
 configure_file(SqEqConfig.h.in SqEqConfig.h)
 
 # add the executable
-add_executable(SqEq main.c SqEq.c)
+add_executable(SqEq main.cc SqEq.cc)
 
 
 # add the binary tree to the search path for include files
