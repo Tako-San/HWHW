@@ -1,22 +1,28 @@
-/**
- * @file SqEq.h
- * @author tako
- * @brief 
- * @version 0.1
- * @date 2021-09-10
- * 
- * @copyright Copyright (c) 2021
- * 
- */
-
 #include <stdbool.h>
 
+/**
+ * @brief return this from main on error
+ */
 #define SQEQ_ERROR 1
+
+/**
+ * @brief maximal munber of roots
+ */
 #define MAX_ROOT_NUM 2
+
+/**
+ * @brief number of coefficients
+ */
 #define COEFF_NUM 3
 
+/**
+ * @brief epsilon
+ */
 #define EPS 1e-12
 
+/**
+ * @brief enum with result types of solve functions
+ */
 enum ResType { RT_ERROR = -1, RT_NO_ROOTS, RT_ONE_ROOT, RT_TWO_ROOTS, RT_INF_ROOTS };
 
 /**

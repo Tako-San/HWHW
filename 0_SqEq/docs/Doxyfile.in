@@ -9,7 +9,7 @@ DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "SqEq"
 PROJECT_NUMBER         = @SqEq_VERSION_MAJOR@.@SqEq_VERSION_MINOR@
 PROJECT_BRIEF          = "Square equation solver"
-OUTPUT_DIRECTORY       = ./docs/
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_SOURCE_DIR@/docs
 CREATE_SUBDIRS         = NO
 ALLOW_UNICODE_NAMES    = NO
 OUTPUT_LANGUAGE        = English
@@ -29,7 +29,9 @@ ABBREVIATE_BRIEF       = "The $name class" \
                          the
 ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
-FULL_PATH_NAMES        = YES
+FULL_PATH_NAMES        = NO
+STRIP_FROM_PATH        = YES
+STRIP_FROM_INC_PATH    = YES
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
 JAVADOC_BANNER         = NO
@@ -108,7 +110,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ./
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.cc \
