@@ -1,3 +1,8 @@
 #include <stdio.h>
 
-int main() { return 0; }
+#include "tsl.hh"
+
+int main() {
+  tsl_puts("What's up, fellow kids?");
+  return 0;
+}
