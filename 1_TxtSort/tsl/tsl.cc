@@ -59,13 +59,13 @@ char *tsl_strcpy(char *dst, const char *src) {
   if ((nullptr == dst) || (nullptr == src))
     return nullptr;
 
-  char *dst_start = dst;
-  do {
-    *dst = *src;
-    ++dst, ++src;
-  } while ('\0' != *src);
+  char *dst_cur = dst;
 
-  return dst_start;
+  for (;'\0' != *src; ++dst_cur, ++src)
+    *dst_cur = *src;
+
+  *dst_cur = '\0';
+  return dst;
 }
 
 char *tsl_strncpy(char *dst, const char *src, size_t n) {
