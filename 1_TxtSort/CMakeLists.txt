@@ -41,7 +41,6 @@ target_link_libraries(TxtSort PUBLIC TSL)
 # so that we will find TxtSortConfig.h
 target_include_directories(TxtSort PUBLIC
                           "${PROJECT_BINARY_DIR}"
-                          "${PROJECT_SOURCE_DIR}/tsl/"
                           )
 
 # add warnings and sanitizers
