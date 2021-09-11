@@ -9,6 +9,9 @@
 #include "tsl.hh"
 
 int tsl_fputs(const char *str, FILE *stream) {
+  if ((nullptr == str) || (nullptr == stream))
+    return EOF;
+
   for (size_t i = 0; str[i] != '\0'; ++i)
     if (!putc(str[i], stream))
       return EOF;
@@ -17,33 +20,38 @@ int tsl_fputs(const char *str, FILE *stream) {
 }
 
 int tsl_puts(const char *str) {
-  tsl_fputs(str, stdout);
-
-  if (!putchar('\n'))
-    return EOF;
-
-  return 0;
+  return (EOF == tsl_fputs(str, stdout)) ? EOF : putchar('\n');
 }
 
 char *tsl_strchr(char *str, int ch) {
-  size_t i = 0;
-  while ((str[i] != '\0') && (str[i] != ch))
-    ++i;
-  return (str[i] == ch) ? (str + i) : nullptr;
+  if (nullptr == str)
+    return nullptr;
+
+  while ((*str != '\0') && (*str != ch))
+    ++str;
+
+  return (*str == ch) ? str : nullptr;
 }
 
 const char *tsl_const_strchr(const char *str, int ch) {
-  size_t i = 0;
-  while ((str[i] != '\0') && (str[i] != ch))
-    ++i;
-  return (str[i] == ch) ? (str + i) : nullptr;
+  if (nullptr == str)
+    return nullptr;
+
+  while ((*str != '\0') && (*str != ch))
+    ++str;
+
+  return (*str == ch) ? str : nullptr;
 }
 
 size_t tsl_strlen(const char *str) {
-  size_t i = 0;
-  while (str[i] != '\0')
-    ++i;
-  return i;
+  if (nullptr == str)
+    return 0;
+
+  size_t len = 0;
+  while (str[len] != '\0')
+    ++len;
+
+  return len;
 }
 
 char *tsl_strcpy(char *dst, const char *src) { return nullptr; }
