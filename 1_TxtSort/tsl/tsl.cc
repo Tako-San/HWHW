@@ -54,6 +54,29 @@ size_t tsl_strlen(const char *str) {
   return len;
 }
 
-char *tsl_strcpy(char *dst, const char *src) { return nullptr; }
+char *tsl_strcpy(char *dst, const char *src) {
+  if ((nullptr == dst) || (nullptr == src))
+    return nullptr;
 
-char *tsl_strncpy(char *dst, const char *src, size_t n) { return nullptr; }
+  char * dst_start = dst;
+  do {
+    *dst = *src;
+    ++dst, ++src;
+  } while ('\0' != *src);
+
+  return dst_start;
+}
+
+char *tsl_strncpy(char *dst, const char *src, size_t n) {
+  if ((nullptr == dst) || (nullptr == src))
+    return nullptr;
+
+  char * dst_start = dst;
+  for (size_t i = 0; (i < n) && ('\0' != *src); ++i) {
+    *dst = *src;
+    ++dst, ++src;
+  }
+
+  *dst = '\0';
+  return dst_start;
+}

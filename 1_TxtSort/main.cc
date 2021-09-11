@@ -11,5 +11,15 @@ int main() {
          tsl_const_strchr(str, 't'));
   printf("'atat'string len is %zu\n", tsl_strlen(str));
 
+  char src[] = "Original string";
+  char dst1[100] = {};
+  char dst2[100] = {};
+
+  tsl_strcpy(dst1, src);
+  tsl_puts(dst1);
+
+  tsl_strncpy(dst2, src, 8);
+  tsl_puts(dst2);
+
   return 0;
 }
