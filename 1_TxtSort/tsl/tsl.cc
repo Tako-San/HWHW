@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "tsl.hh"
 
@@ -122,4 +123,14 @@ char *tsl_fgets(char *str, int size, FILE *stream) {
 
   *str_cur = '\0';
   return str;
+}
+
+char *tsl_strdup(const char *str) {
+  if (nullptr == str)
+    return nullptr;
+
+  size_t len = tsl_strlen(str);
+  char *copy_str = (char *)malloc((len + 1) * sizeof(char));
+
+  return tsl_strcpy(copy_str, str);
 }

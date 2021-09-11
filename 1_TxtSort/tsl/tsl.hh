@@ -96,4 +96,13 @@ char *tsl_strncat(char *dst, const char *src, size_t n);
  */
 char *tsl_fgets(char *str, int size, FILE *stream);
 
+/**
+ * @brief returns a pointer to a new string which is a duplicate of the string
+   str. Memory for the new string is obtained with malloc, and can be freed
+   with free.
+ * @param[in] str
+ * @return char*
+ */
+char *tsl_strdup(const char *str);
+
 #endif

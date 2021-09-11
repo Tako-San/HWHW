@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "tsl.hh"
@@ -27,8 +28,13 @@ int main() {
   tsl_puts(str1);
 
   char str3[100] = {};
-  tsl_puts("Enter a string:");
-  tsl_fgets(str3, 100, stdin);
-  tsl_puts(str3);
+  // tsl_puts("Enter a string:");
+  // tsl_fgets(str3, 100, stdin);
+  // tsl_puts(str3);
+
+  char *str4 = tsl_strdup(str2);
+  tsl_puts(str4);
+
+  free(str4);
   return 0;
 }
