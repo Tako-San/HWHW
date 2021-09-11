@@ -102,3 +102,24 @@ char *tsl_strncat(char *dst, const char *src, size_t n) {
 
   return (nullptr == tsl_strcpy(dst_cur, src)) ? nullptr : dst;
 }
+
+char *tsl_fgets(char *str, int size, FILE *stream) {
+  if ((nullptr == str) || (nullptr == stream) || (size < 1))
+    return nullptr;
+
+  char *str_cur = str;
+  for (size_t i = 0, sz = size - 1; i < sz; ++i, ++str_cur) {
+    char c = getc(stream);
+    if (0 >= c)
+      break;
+
+    *str_cur = c;
+    if ('\n' == c) {
+      ++str_cur;
+      break;
+    }
+  }
+
+  *str_cur = '\0';
+  return str;
+}

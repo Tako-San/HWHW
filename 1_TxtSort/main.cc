@@ -26,5 +26,9 @@ int main() {
   tsl_strncat(str1, str2, 6);
   tsl_puts(str1);
 
+  char str3[100] = {};
+  tsl_puts("Enter a string:");
+  tsl_fgets(str3, 100, stdin);
+  tsl_puts(str3);
   return 0;
 }
