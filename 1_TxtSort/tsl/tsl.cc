@@ -38,3 +38,14 @@ const char *tsl_const_strchr(const char *str, int ch) {
     ++i;
   return (str[i] == ch) ? (str + i) : nullptr;
 }
+
+size_t tsl_strlen(const char *str) {
+  size_t i = 0;
+  while (str[i] != '\0')
+    ++i;
+  return i;
+}
+
+char *tsl_strcpy(char *dst, const char *src) { return nullptr; }
+
+char *tsl_strncpy(char *dst, const char *src, size_t n) { return nullptr; }
