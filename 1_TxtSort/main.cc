@@ -21,5 +21,10 @@ int main() {
   tsl_strncpy(dst2, src, 8);
   tsl_puts(dst2);
 
+  char str1[20] = "part1__";
+  char str2[20] = "part2";
+  tsl_strncat(str1, str2, 6);
+  tsl_puts(str1);
+
   return 0;
 }

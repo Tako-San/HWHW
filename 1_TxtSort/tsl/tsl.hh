@@ -56,11 +56,32 @@ char *tsl_strcpy(char *dst, const char *src);
 
 /**
  * @brief  similar to tsl_strcpy, except that at most n bytes of src are copied
- * @param[out] dst 
- * @param[in] src 
- * @param[in] n 
- * @return char* 
+ * @param[out] dst
+ * @param[in] src
+ * @param[in] n
+ * @return char*
  */
 char *tsl_strncpy(char *dst, const char *src, size_t n);
+
+/**
+ * @brief appends the src string to the dest string, overwriting the
+   terminating null byte ('\0') at the end of dest, and then adds a terminating
+   null byte.
+ * @param[out] dst
+ * @param[in] src
+ * @return char*
+ */
+char *tsl_strcat(char *dst, const char *src);
+
+/**
+ * @brief is similar to tsl_strcat, except that it will use at most n bytes from
+   src and src does not need to be null-terminated if it contains n or more
+   bytes.
+ * @param[out] dst
+ * @param[in] src
+ * @param[in] n
+ * @return char*
+ */
+char *tsl_strncat(char *dst, const char *src, size_t n);
 
 #endif

@@ -58,7 +58,7 @@ char *tsl_strcpy(char *dst, const char *src) {
   if ((nullptr == dst) || (nullptr == src))
     return nullptr;
 
-  char * dst_start = dst;
+  char *dst_start = dst;
   do {
     *dst = *src;
     ++dst, ++src;
@@ -71,12 +71,34 @@ char *tsl_strncpy(char *dst, const char *src, size_t n) {
   if ((nullptr == dst) || (nullptr == src))
     return nullptr;
 
-  char * dst_start = dst;
+  char *dst_cur = dst;
   for (size_t i = 0; (i < n) && ('\0' != *src); ++i) {
-    *dst = *src;
-    ++dst, ++src;
+    *dst_cur = *src;
+    ++dst_cur, ++src;
   }
 
-  *dst = '\0';
-  return dst_start;
+  *dst_cur = '\0';
+  return dst;
+}
+
+char *tsl_strcat(char *dst, const char *src) {
+  if ((nullptr == dst) || (nullptr == src))
+    return nullptr;
+
+  char *dst_cur = dst;
+  while (*dst_cur != '\0')
+    ++dst_cur;
+
+  return (nullptr == tsl_strcpy(dst_cur, src)) ? nullptr : dst;
+}
+
+char *tsl_strncat(char *dst, const char *src, size_t n) {
+  if ((nullptr == dst) || (nullptr == src))
+    return nullptr;
+
+  char *dst_cur = dst;
+  for (size_t i = 0; (i < n) && (*dst_cur != '\0'); ++i, ++dst_cur)
+    ;
+
+  return (nullptr == tsl_strcpy(dst_cur, src)) ? nullptr : dst;
 }
