@@ -130,7 +130,7 @@ char *tsl_strdup(const char *str) {
     return nullptr;
 
   size_t len = tsl_strlen(str);
-  char *copy_str = (char *)malloc((len + 1) * sizeof(char));
+  char *copy_str = (char *)calloc(len + 1, sizeof(char));
 
-  return tsl_strcpy(copy_str, str);
+  return (nullptr == copy_str) ? nullptr : tsl_strcpy(copy_str, str);
 }
