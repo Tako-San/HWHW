@@ -111,12 +111,13 @@ char *tsl_fgets(char *str, int size, FILE *stream) {
   char *str_cur = str;
   for (size_t i = 0, sz = size - 1; i < sz; ++i, ++str_cur) {
     char c = getc(stream);
-    if (0 > c)
-      return nullptr;
 
     *str_cur = c;
-    if ('\0' == c)
+    if ((EOF == c) || ('\0' == c))
       break;
+
+    if (0 > c)
+      return nullptr;
 
     if ('\n' == c) {
       ++str_cur;
