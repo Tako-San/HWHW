@@ -1,15 +1,17 @@
 #include "CharBuf.hh"
 
-CharBuf *cb_init(CharBuf *cb, size_t elem_num) {
+CharBuf *cb_init(CharBuf *cb, size_t elem_num)
+{
   if (nullptr == cb)
     return nullptr;
 
-  cb->buf = (char*)calloc(elem_num + 1, sizeof(char));
+  cb->buf = (char *)calloc(elem_num + 1, sizeof(char));
   cb->size = elem_num;
   return cb;
 }
 
-CharBuf *cb_destr(CharBuf *cb) {
+CharBuf *cb_destr(CharBuf *cb)
+{
   if (nullptr == cb)
     return nullptr;
 

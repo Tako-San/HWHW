@@ -6,14 +6,15 @@
 /**
  * @brief Struct which keeps dynamic char array and it's size
  */
-struct CharBuf {
+struct CharBuf
+{
   char *buf;
   size_t size;
 };
 
 /**
  * @brief CharBuf constructor
- * 
+ *
  * @param cb CharBuf object
  * @param elem_num number of elements in buffer
  * @return pointer to input CharBuf object
@@ -22,7 +23,7 @@ CharBuf *cb_init(CharBuf *cb, size_t elem_num);
 
 /**
  * @brief CharBuf destructor
- * 
+ *
  * @param cb CharBuf object
  * @return pointer to input CharBuf object
  */

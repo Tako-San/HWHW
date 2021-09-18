@@ -9,7 +9,8 @@
 
 #include "tsl.hh"
 
-int tsl_fputs(const char *str, FILE *stream) {
+int tsl_fputs(const char *str, FILE *stream)
+{
   if ((nullptr == str) || (nullptr == stream))
     return EOF;
 
@@ -20,11 +21,13 @@ int tsl_fputs(const char *str, FILE *stream) {
   return 0;
 }
 
-int tsl_puts(const char *str) {
+int tsl_puts(const char *str)
+{
   return (EOF == tsl_fputs(str, stdout)) ? EOF : putchar('\n');
 }
 
-char *tsl_strchr(char *str, int ch) {
+char *tsl_strchr(char *str, int ch)
+{
   if (nullptr == str)
     return nullptr;
 
@@ -34,7 +37,8 @@ char *tsl_strchr(char *str, int ch) {
   return (*str == ch) ? str : nullptr;
 }
 
-const char *tsl_const_strchr(const char *str, int ch) {
+const char *tsl_const_strchr(const char *str, int ch)
+{
   if (nullptr == str)
     return nullptr;
 
@@ -44,7 +48,8 @@ const char *tsl_const_strchr(const char *str, int ch) {
   return (*str == ch) ? str : nullptr;
 }
 
-size_t tsl_strlen(const char *str) {
+size_t tsl_strlen(const char *str)
+{
   if (nullptr == str)
     return 0;
 
@@ -55,25 +60,28 @@ size_t tsl_strlen(const char *str) {
   return len;
 }
 
-char *tsl_strcpy(char *dst, const char *src) {
+char *tsl_strcpy(char *dst, const char *src)
+{
   if ((nullptr == dst) || (nullptr == src))
     return nullptr;
 
   char *dst_cur = dst;
 
-  for (;'\0' != *src; ++dst_cur, ++src)
+  for (; '\0' != *src; ++dst_cur, ++src)
     *dst_cur = *src;
 
   *dst_cur = '\0';
   return dst;
 }
 
-char *tsl_strncpy(char *dst, const char *src, size_t n) {
+char *tsl_strncpy(char *dst, const char *src, size_t n)
+{
   if ((nullptr == dst) || (nullptr == src))
     return nullptr;
 
   char *dst_cur = dst;
-  for (size_t i = 0; (i < n) && ('\0' != *src); ++i) {
+  for (size_t i = 0; (i < n) && ('\0' != *src); ++i)
+  {
     *dst_cur = *src;
     ++dst_cur, ++src;
   }
@@ -82,7 +90,8 @@ char *tsl_strncpy(char *dst, const char *src, size_t n) {
   return dst;
 }
 
-char *tsl_strcat(char *dst, const char *src) {
+char *tsl_strcat(char *dst, const char *src)
+{
   if ((nullptr == dst) || (nullptr == src))
     return nullptr;
 
@@ -93,7 +102,8 @@ char *tsl_strcat(char *dst, const char *src) {
   return (nullptr == tsl_strcpy(dst_cur, src)) ? nullptr : dst;
 }
 
-char *tsl_strncat(char *dst, const char *src, size_t n) {
+char *tsl_strncat(char *dst, const char *src, size_t n)
+{
   if ((nullptr == dst) || (nullptr == src))
     return nullptr;
 
@@ -104,12 +114,14 @@ char *tsl_strncat(char *dst, const char *src, size_t n) {
   return (nullptr == tsl_strcpy(dst_cur, src)) ? nullptr : dst;
 }
 
-char *tsl_fgets(char *str, int size, FILE *stream) {
+char *tsl_fgets(char *str, int size, FILE *stream)
+{
   if ((nullptr == str) || (nullptr == stream) || (size < 1))
     return nullptr;
 
   char *str_cur = str;
-  for (size_t i = 0, sz = size - 1; i < sz; ++i, ++str_cur) {
+  for (size_t i = 0, sz = size - 1; i < sz; ++i, ++str_cur)
+  {
     char c = getc(stream);
 
     *str_cur = c;
@@ -119,7 +131,8 @@ char *tsl_fgets(char *str, int size, FILE *stream) {
     if (0 > c)
       return nullptr;
 
-    if ('\n' == c) {
+    if ('\n' == c)
+    {
       ++str_cur;
       break;
     }
@@ -129,7 +142,8 @@ char *tsl_fgets(char *str, int size, FILE *stream) {
   return str;
 }
 
-char *tsl_strdup(const char *str) {
+char *tsl_strdup(const char *str)
+{
   if (nullptr == str)
     return nullptr;
 
@@ -139,12 +153,12 @@ char *tsl_strdup(const char *str) {
   return (nullptr == copy_str) ? nullptr : tsl_strcpy(copy_str, str);
 }
 
-int tsl_test() {
+int tsl_test()
+{
   tsl_puts("What's up, fellow kids?");
 
   const char *str = "atat";
-  printf("found sym %c by address %p\n", *tsl_const_strchr(str, 't'),
-         tsl_const_strchr(str, 't'));
+  printf("found sym %c by address %p\n", *tsl_const_strchr(str, 't'), tsl_const_strchr(str, 't'));
   printf("'atat'string len is %zu\n", tsl_strlen(str));
 
   char src[] = "Original string";

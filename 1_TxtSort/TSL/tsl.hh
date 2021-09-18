@@ -1,5 +1,5 @@
-#ifndef TSL_H
-#define TSL_H
+#ifndef TSL_HH
+#define TSL_HH
 
 /**
  * @brief writes the string str to stream, without terminating null byte ('\0').
@@ -112,4 +112,4 @@ char *tsl_strdup(const char *str);
  */
 int tsl_test();
 
-#endif
+#endif // TSL_HH
