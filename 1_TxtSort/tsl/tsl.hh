@@ -106,4 +106,10 @@ char *tsl_fgets(char *str, int size, FILE *stream);
  */
 char *tsl_strdup(const char *str);
 
+/**
+ * @brief unit test for tsl functions
+ * @return 0 on success
+ */
+int tsl_test();
+
 #endif
