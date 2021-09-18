@@ -3,38 +3,44 @@
 #include <string.h>
 
 #include "tsl.hh"
+#include "CharBuf.hh"
 
-int main() {
-  tsl_puts("What's up, fellow kids?");
+void print_usage(char name[]) { printf("USAGE: %s input_file\n", name); }
+bool cl_parse(int argc) { return (argc == 2) ? true : false; }
+long file_size(FILE *fp);
 
-  const char *str = "atat";
-  printf("found sym %c by address %p\n", *tsl_const_strchr(str, 't'),
-         tsl_const_strchr(str, 't'));
-  printf("'atat'string len is %zu\n", tsl_strlen(str));
 
-  char src[] = "Original string";
-  char dst1[100] = {};
-  char dst2[100] = {};
+int main(int argc, char *argv[]) {
+  if (!cl_parse(argc)) {
+    print_usage(argv[0]);
+    return 0;
+  }
 
-  tsl_strcpy(dst1, src);
-  tsl_puts(dst1);
+  char *filename = argv[1];
+  FILE *fp = fopen(filename, "rb");
+  if (nullptr == fp) {
+    puts("Error while opening file.");
+    puts("Exiting...");
+    return 1;
+  }
 
-  tsl_strncpy(dst2, src, 8);
-  tsl_puts(dst2);
+  size_t fsize = file_size(fp);
+  CharBuf raw_data = {nullptr, 0};
+  cb_init(&raw_data, fsize);
 
-  char str1[20] = "part1__";
-  char str2[20] = "part2";
-  tsl_strncat(str1, str2, 6);
-  tsl_puts(str1);
+  fread(raw_data.buf, sizeof(char), file_size(fp), fp);
+  printf("%s", raw_data.buf);
 
-  char str3[100] = {};
-  tsl_puts("Enter a string:");
-  tsl_fgets(str3, 100, stdin);
-  tsl_puts(str3);
-
-  char *str4 = tsl_strdup(str2);
-  tsl_puts(str4);
-
-  free(str4);
+  fclose(fp);
+  cb_destr(&raw_data);
   return 0;
+}
+
+long file_size(FILE *fp) {
+  if (-1 == fseek(fp, 0L, SEEK_END))
+    return -1;
+  long res = ftell(fp);
+
+  rewind(fp);
+  return res;
 }
