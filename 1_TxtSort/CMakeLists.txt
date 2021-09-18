@@ -32,11 +32,12 @@ endif()
 # add the TSL library
 add_subdirectory(TSL)
 add_subdirectory(CharBuf)
+add_subdirectory(Trace)
 
 # add the executable
 add_executable(TxtSort main.cc)
 
-target_link_libraries(TxtSort PUBLIC TSL CB)
+target_link_libraries(TxtSort PUBLIC TSL TLL CB)
 
 # add the binary tree to the search path for include files
 # so that we will find TxtSortConfig.h
@@ -48,4 +49,4 @@ target_include_directories(TxtSort PUBLIC
 target_compile_features(TxtSort PUBLIC cxx_std_11)
 
 # add warnings and sanitizers
-target_compile_options(TxtSort INTERFACE "-Wall -Wextra -fsanitize=addres,undefined")
+target_compile_options(TxtSort PUBLIC -Wall -Wextra)
