@@ -30,7 +30,7 @@ if (CMAKE_BUILD_TYPE MATCHES "^[Rr]elease")
 endif()
 
 # add the TSL library
-add_subdirectory(tsl)
+add_subdirectory(TSL)
 add_subdirectory(CharBuf)
 
 # add the executable
