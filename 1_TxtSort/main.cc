@@ -10,7 +10,7 @@ long file_size(FILE *fp);
 
 int main(int argc, char *argv[])
 {
-  tll_set_log_lvl(TLL_LOG);
+  tll_set_log_lvl(TLL_ERR);
   if (2 != argc)
   {
     tll_error("USAGE: %s input_file\n", argv[0]);
@@ -48,8 +48,12 @@ int main(int argc, char *argv[])
   StrArray parsed_data = tsl_split_lines(raw_data);
 
   for (size_t i = 0; i < parsed_data.size; ++i)
-    printf("%.*s\n", parsed_data.lines[i].size, parsed_data.lines[i].buf);
+    printf("%.*s\n", (int)parsed_data.lines[i].size, parsed_data.lines[i].buf);
 
+  qsort(parsed_data.lines, parsed_data.size, sizeof(CharBuf), tsl_cb_cmp);
+
+  for (size_t i = 0; i < parsed_data.size; ++i)
+    printf("%.*s\n", (int)parsed_data.lines[i].size, parsed_data.lines[i].buf);
 
   cb_destr(&raw_data);
   free(parsed_data.lines);
