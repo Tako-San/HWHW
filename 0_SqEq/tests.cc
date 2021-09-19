@@ -3,15 +3,17 @@
 
 #include "SqEq.h"
 
-static bool linear_check(int res_type, int ans_res_type, double val, double ans,
-                         const char *msg) {
-  if (res_type != ans_res_type) {
+static bool linear_check(int res_type, int ans_res_type, double val, double ans, const char *msg)
+{
+  if (res_type != ans_res_type)
+  {
     puts("FAILED: linear_check res_type");
     puts(msg);
     return false;
   }
 
-  if (!is_equal(val, ans)) {
+  if (!is_equal(val, ans))
+  {
     puts("FAILED: linear_check result value");
     puts(msg);
     return false;
@@ -20,7 +22,8 @@ static bool linear_check(int res_type, int ans_res_type, double val, double ans,
   return true;
 }
 
-static bool test_linear() {
+static bool test_linear()
+{
   int res_type = RT_ERROR;
   double x = NAN;
 
@@ -48,9 +51,13 @@ static bool test_linear() {
 }
 
 // TODO(Tako): Finish this stuff
-static bool test_square() { return true; }
+static bool test_square()
+{
+  return true;
+}
 
-bool unit_testing() {
+bool unit_testing()
+{
   if (!test_linear())
     return false;
 

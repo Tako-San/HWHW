@@ -10,13 +10,15 @@
 
 #include "SqEq.h"
 
-bool read_coeffs(const char *prompt, double coeffs[COEFF_NUM]) {
+bool read_coeffs(const char *prompt, double coeffs[COEFF_NUM])
+{
   puts(prompt);
   int scanned = scanf("%lf %lf %lf", coeffs, coeffs + 1, coeffs + 2);
   return COEFF_NUM == scanned;
 }
 
-int solve_sqeq(const double coeffs[COEFF_NUM], double results[MAX_ROOT_NUM]) {
+int solve_sqeq(const double coeffs[COEFF_NUM], double results[MAX_ROOT_NUM])
+{
   if ((nullptr == coeffs) || (nullptr == results))
     return RT_NULLPTR_ERROR;
 
@@ -26,27 +28,37 @@ int solve_sqeq(const double coeffs[COEFF_NUM], double results[MAX_ROOT_NUM]) {
 
   if (is_equal(a, 0))
     return (solve_linear(b, c, results));
-  else if (is_equal(c, 0)) {
-    if (is_equal(b, 0)) {
+  else if (is_equal(c, 0))
+  {
+    if (is_equal(b, 0))
+    {
       results[0] = 0;
       results[1] = NAN;
       return RT_ONE_ROOT;
-    } else {
+    }
+    else
+    {
       results[0] = 0;
       return (solve_linear(a, b, results + 1) + 1);
     }
   }
 
-  else {
+  else
+  {
     double d = b * b - 4 * a * c;
 
-    if (is_equal(d, 0)) {
+    if (is_equal(d, 0))
+    {
       results[0] = -b / (2 * a);
       results[1] = NAN;
       return RT_ONE_ROOT;
-    } else if (d < 0) {
+    }
+    else if (d < 0)
+    {
       return RT_NO_ROOTS;
-    } else if (d > 0) {
+    }
+    else if (d > 0)
+    {
       double sqrt_d = sqrt(d);
       results[0] = (-b + sqrt_d) / (2 * a);
       results[1] = (-b - sqrt_d) / (2 * a);
@@ -56,23 +68,32 @@ int solve_sqeq(const double coeffs[COEFF_NUM], double results[MAX_ROOT_NUM]) {
   return RT_ERROR;
 }
 
-int solve_linear(double b, double c, double *x_ptr) {
+int solve_linear(double b, double c, double *x_ptr)
+{
   if (is_equal(b, 0))
     return is_equal(c, 0) ? RT_INF_ROOTS : RT_NO_ROOTS;
-  else if (is_equal(c, 0)) {
+  else if (is_equal(c, 0))
+  {
     *x_ptr = 0;
     return RT_ONE_ROOT;
-  } else {
+  }
+  else
+  {
     *x_ptr = -c / b;
     return RT_ONE_ROOT;
   }
 }
 
-int is_equal(double n1, double n2) { return (fabs(n1 - n2) < EPS); }
+int is_equal(double n1, double n2)
+{
+  return (fabs(n1 - n2) < EPS);
+}
 
-void print_res(int res_type, const double results[MAX_ROOT_NUM]) {
+void print_res(int res_type, const double results[MAX_ROOT_NUM])
+{
   printf("Answer:\n");
-  switch (res_type) {
+  switch (res_type)
+  {
   case RT_NO_ROOTS:
     printf("No roots\n");
     break;
@@ -100,4 +121,7 @@ void print_res(int res_type, const double results[MAX_ROOT_NUM]) {
   }
 }
 
-int ret_code(int res_type) { return (res_type >= RT_VALID) ? 0 : SQEQ_ERROR; }
+int ret_code(int res_type)
+{
+  return (res_type >= RT_VALID) ? 0 : SQEQ_ERROR;
+}
