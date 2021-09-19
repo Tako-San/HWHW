@@ -31,7 +31,7 @@ endif()
 
 # add the TSL library
 add_subdirectory(TSL)
-add_subdirectory(CharBuf)
+add_subdirectory(TSL/CharBuf)
 add_subdirectory(Trace)
 
 # add the executable

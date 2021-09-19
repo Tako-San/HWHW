@@ -19,3 +19,11 @@ CharBuf *cb_destr(CharBuf *cb)
   cb->size = 0;
   return cb;
 }
+
+// bool cb_empty(const CharBuf cb)
+// {
+//   if (0 == cb.size)
+//     return true;
+
+//   return false;
+// }

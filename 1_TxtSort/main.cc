@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
     tll_error("Error while reading file.\n");
     return tll_exit_code();
   }
-  printf("%s", raw_data.buf);
-
   fclose(fp);
+  printf("%s\n", raw_data.buf);
+
   cb_destr(&raw_data);
   return tll_exit_code();
 }
@@ -52,4 +52,9 @@ long file_size(FILE *fp)
 
   rewind(fp);
   return res;
+}
+
+size_t tsl_split_lines(CharBuf raw, StrArray *tagged)
+{
+  
 }

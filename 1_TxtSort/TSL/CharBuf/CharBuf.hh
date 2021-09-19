@@ -13,6 +13,20 @@ struct CharBuf
 };
 
 /**
+ * @brief Alias for CharBuf struct
+ */
+typedef CharBuf String;
+
+/**
+ * @brief Struct to keep all strings
+ */
+struct StrArray
+{
+  String *lines;
+  size_t size;
+};
+
+/**
  * @brief CharBuf constructor
  *
  * @param cb CharBuf object
