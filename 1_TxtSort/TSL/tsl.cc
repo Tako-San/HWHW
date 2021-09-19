@@ -4,6 +4,7 @@
  * @brief Tako's string library
  */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -199,7 +200,8 @@ StrArray tsl_split_lines(CharBuf raw)
     return {nullptr, 0};
   }
 
-  StrArray parsed{nullptr, 1}; /* even empty file contains one line */
+  /* even empty file contains one line */
+  StrArray parsed{nullptr, 1};
 
   /* counting number of lines */
   for (char *cur = raw.buf; '\0' != *cur; ++cur)
@@ -234,4 +236,30 @@ StrArray tsl_split_lines(CharBuf raw)
   /* filling last line length */
   parsed.lines[cur_num - 1].size = cur_sym - parsed.lines[cur_num - 1].buf;
   return parsed;
+}
+
+int tsl_cb_cmp(const void *lhs, const void *rhs)
+{
+  CharBuf l = *(CharBuf *)lhs;
+  CharBuf r = *(CharBuf *)rhs;
+
+  char *lsym = l.buf;
+  char *rsym = r.buf;
+
+  for (char *lend = lsym + l.size, *rend = rsym + r.size; (lsym != lend) && (rsym != rend); ++lsym, ++rsym)
+  {
+    while ((lsym != lend) && (!isalpha(*lsym)))
+        ++lsym;
+
+    while ((rsym != rend) && (!isalpha(*rsym)))
+        ++rsym;
+
+    if ((lsym == lend) || (rsym == rend))
+      break;
+
+    if (*lsym != *rsym)
+      break;
+  }
+
+  return tolower(*lsym) - tolower(*rsym);
 }

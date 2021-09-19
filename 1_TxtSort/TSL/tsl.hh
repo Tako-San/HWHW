@@ -117,8 +117,18 @@ int tsl_test();
 /**
  * @brief split input buffer to lines, allocates memory in StrArray::lines. Do not forget to free
  * @param[in] raw input char buffer
- * @return StrArray 
+ * @return StrArray
  */
 StrArray tsl_split_lines(CharBuf raw);
+
+/**
+ * @brief comparator for CharBuf strings
+ * @param[in] l
+ * @param[in] r
+ * @return == 0 if elements are equal
+ * @return > 0 if l > r
+ * @return < 0 if l < r
+ */
+int tsl_cb_cmp(const void *lhs, const void *rhs);
 
 #endif // TSL_HH
