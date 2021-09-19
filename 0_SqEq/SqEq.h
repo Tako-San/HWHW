@@ -21,7 +21,8 @@
 /**
  * @brief enum with result types of solve functions
  */
-enum ResType {
+enum ResType
+{
   RT_ERROR, // Errors from here
   RT_INV_COEFF_ERROR,
   RT_NULLPTR_ERROR,
@@ -89,7 +90,7 @@ int ret_code(int res_type);
 
 /**
  * @brief Testing SqEq functions
- * 
+ *
  * @return true if all tests passed
  * @return false if tests not passed
  */

@@ -6,7 +6,8 @@
 void print_greeting();
 int print_exit_msg(const char *msg);
 
-int main() {
+int main()
+{
   if (!unit_testing())
     return print_exit_msg("Unit tests not passed");
 
@@ -23,12 +24,13 @@ int main() {
   return ret_code(res_type);
 }
 
-void print_greeting() {
-  printf("Square equation solver v.%d.%d\n", SqEq_VERSION_MAJOR,
-         SqEq_VERSION_MINOR);
+void print_greeting()
+{
+  printf("Square equation solver v.%d.%d\n", SqEq_VERSION_MAJOR, SqEq_VERSION_MINOR);
 }
 
-int print_exit_msg(const char *msg) {
+int print_exit_msg(const char *msg)
+{
   puts(msg);
   puts("Exiting...");
   return SQEQ_ERROR;
