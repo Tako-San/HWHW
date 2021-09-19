@@ -21,7 +21,6 @@ int main(int argc, char *argv[])
   if (nullptr == fp)
   {
     tll_error("Error while opening file.\n");
-    tll_error("Exiting...\n");
     return tll_exit_code();
   }
 
@@ -30,11 +29,14 @@ int main(int argc, char *argv[])
   if (nullptr == cb_init(&raw_data, fsize))
   {
     tll_error("Error while opening file.\n");
-    tll_error("Exiting...\n");
     return tll_exit_code();
   }
 
-  fread(raw_data.buf, sizeof(char), file_size(fp), fp);
+  if (fread(raw_data.buf, sizeof(char), fsize, fp) < fsize)
+  {
+    tll_error("Error while reading file.\n");
+    return tll_exit_code();
+  }
   printf("%s", raw_data.buf);
 
   fclose(fp);

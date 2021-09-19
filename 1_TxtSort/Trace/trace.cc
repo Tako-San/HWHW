@@ -67,5 +67,9 @@ int tll_error(const char *format, ...)
 
 int tll_exit_code()
 {
-  return IS_FAILED ? -1 : 0;
+  if (!IS_FAILED)
+    return 0;
+
+  tll_error("Exiting...\n");
+  return -1;
 }
