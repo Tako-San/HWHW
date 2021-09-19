@@ -37,7 +37,7 @@ add_subdirectory(Trace)
 # add the executable
 add_executable(TxtSort main.cc)
 
-target_link_libraries(TxtSort PUBLIC TSL TLL CB)
+target_link_libraries(TxtSort PUBLIC TSL)
 
 # add the binary tree to the search path for include files
 # so that we will find TxtSortConfig.h

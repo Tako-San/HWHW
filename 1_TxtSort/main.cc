@@ -10,11 +10,14 @@ long file_size(FILE *fp);
 
 int main(int argc, char *argv[])
 {
+  tll_set_log_lvl(TLL_LOG);
   if (2 != argc)
   {
     tll_error("USAGE: %s input_file\n", argv[0]);
     return tll_exit_code();
   }
+
+  tll_verbose("Opening file: %s\n", argv[1]);
 
   char *fname = argv[1];
   FILE *fp = fopen(fname, "rb");
@@ -32,15 +35,24 @@ int main(int argc, char *argv[])
     return tll_exit_code();
   }
 
+  tll_verbose("Reading from file\n");
   if (fread(raw_data.buf, sizeof(char), fsize, fp) < fsize)
   {
     tll_error("Error while reading file.\n");
     return tll_exit_code();
   }
+  
+  tll_verbose("Closing file: %s\n", argv[1]);
   fclose(fp);
-  printf("%s\n", raw_data.buf);
+
+  StrArray parsed_data = tsl_split_lines(raw_data);
+
+  for (size_t i = 0; i < parsed_data.size; ++i)
+    printf("%.*s\n", parsed_data.lines[i].size, parsed_data.lines[i].buf);
+
 
   cb_destr(&raw_data);
+  free(parsed_data.lines);
   return tll_exit_code();
 }
 
@@ -52,9 +64,4 @@ long file_size(FILE *fp)
 
   rewind(fp);
   return res;
-}
-
-size_t tsl_split_lines(CharBuf raw, StrArray *tagged)
-{
-  
 }

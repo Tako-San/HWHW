@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "trace.hh"
 #include "tsl.hh"
 
 int tsl_fputs(const char *str, FILE *stream)
@@ -155,6 +156,7 @@ char *tsl_strdup(const char *str)
 
 int tsl_test()
 {
+  tll_verbose("Testing!\n");
   tsl_puts("What's up, fellow kids?");
 
   const char *str = "atat";
@@ -186,4 +188,50 @@ int tsl_test()
 
   free(str4);
   return 0;
+}
+
+StrArray tsl_split_lines(CharBuf raw)
+{
+  tll_verbose("Splitting lines\n");
+  if (nullptr == raw.buf)
+  {
+    tll_warning("Empty string buffer\n");
+    return {nullptr, 0};
+  }
+
+  StrArray parsed{nullptr, 1}; /* even empty file contains one line */
+
+  /* counting number of lines */
+  for (char *cur = raw.buf; '\0' != *cur; ++cur)
+    if ('\n' == *cur)
+      ++parsed.size;
+
+  tll_verbose("Numder of lines in input file: %zu\n", parsed.size);
+
+  parsed.lines = (String *)calloc(parsed.size, sizeof(String));
+  if (!parsed.lines)
+  {
+    tll_error("Memory allocation error\n");
+    return {nullptr, 0};
+  }
+
+  size_t cur_num = 0;      /* current string number */
+  char *cur_sym = raw.buf; /* ptr to current symbol */
+
+  parsed.lines[cur_num++].buf = cur_sym;
+  for (; '\0' != *cur_sym; ++cur_sym)
+  {
+    if ('\n' == *cur_sym)
+    {
+      /* filling previous line length */
+      parsed.lines[cur_num - 1].size = cur_sym - parsed.lines[cur_num - 1].buf;
+
+      /* labeling current line pointer */
+      parsed.lines[cur_num++].buf = cur_sym + 1;
+    }
+  }
+
+  /* filling last line length */
+  parsed.lines[cur_num - 1].size = cur_sym - parsed.lines[cur_num - 1].buf;
+  return parsed;
 }

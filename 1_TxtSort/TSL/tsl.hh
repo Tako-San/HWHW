@@ -1,6 +1,8 @@
 #ifndef TSL_HH
 #define TSL_HH
 
+#include "CharBuf.hh"
+
 /**
  * @brief writes the string str to stream, without terminating null byte ('\0').
  * @param[in] str
@@ -111,5 +113,12 @@ char *tsl_strdup(const char *str);
  * @return 0 on success
  */
 int tsl_test();
+
+/**
+ * @brief split input buffer to lines, allocates memory in StrArray::lines. Do not forget to free
+ * @param[in] raw input char buffer
+ * @return StrArray 
+ */
+StrArray tsl_split_lines(CharBuf raw);
 
 #endif // TSL_HH

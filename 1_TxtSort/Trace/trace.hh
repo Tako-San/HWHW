@@ -41,4 +41,10 @@ int tll_error(const char *format, ...);
  */
 int tll_exit_code();
 
+/**
+ * @brief function to set logging level
+ * @param log_lvl logging level
+ */
+void tll_set_log_lvl(LogLvl log_lvl);
+
 #endif // TRACE_HH

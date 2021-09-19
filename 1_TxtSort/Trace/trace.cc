@@ -10,7 +10,7 @@
 #include "trace.hh"
 
 static bool IS_FAILED = false;
-static int LOG_LVL = TLL_ERR;
+static LogLvl LOG_LVL = TLL_ERR;
 
 int tll_verbose(const char *format, ...)
 {
@@ -72,4 +72,9 @@ int tll_exit_code()
 
   tll_error("Exiting...\n");
   return -1;
+}
+
+void tll_set_log_lvl(LogLvl log_lvl)
+{
+  LOG_LVL = log_lvl;
 }
