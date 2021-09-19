@@ -6,6 +6,10 @@ project(TxtSort VERSION 1.0)
 # first we can indicate the documentation build as an option and set it to ON by default
 option(BUILD_DOC "Build documentation" ON)
 
+if (CMAKE_BUILD_TYPE MATCHES "^[Dd]ebug")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address, undefined")
+endif()
+
 # check if Doxygen is installed
 if (CMAKE_BUILD_TYPE MATCHES "^[Rr]elease")
   find_package(Doxygen)
