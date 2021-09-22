@@ -22,6 +22,11 @@ int main(int argc, char *argv[])
 
   tll_verbose("Splitting text to lines\n");
   StrArray parsed_data = tsl_split_lines(raw_data);
+  if (0 == parsed_data.size)
+  {
+    tll_error("Error while splitting file\n");
+    return tll_exit_code();
+  }
 
   tll_verbose("Printing original text...\n");
   sa_print(parsed_data);

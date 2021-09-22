@@ -211,7 +211,7 @@ StrArray tsl_split_lines(CharBuf raw)
   tll_verbose("Numder of lines in input file: %zu\n", parsed.size);
 
   parsed.lines = (String *)calloc(parsed.size, sizeof(String));
-  if (!parsed.lines)
+  if (nullptr == parsed.lines)
   {
     tll_error("Memory allocation error\n");
     return {nullptr, 0};
