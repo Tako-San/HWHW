@@ -43,4 +43,11 @@ CharBuf *cb_init(CharBuf *cb, size_t elem_num);
  */
 CharBuf *cb_destr(CharBuf *cb);
 
+/**
+ * @brief prints string array
+ * 
+ * @param[in] sa 
+ */
+void sa_print(StrArray sa);
+
 #endif // CHAR_BUF_HH

@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "CharBuf.hh"
 
 CharBuf *cb_init(CharBuf *cb, size_t elem_num)
@@ -20,10 +22,8 @@ CharBuf *cb_destr(CharBuf *cb)
   return cb;
 }
 
-// bool cb_empty(const CharBuf cb)
-// {
-//   if (0 == cb.size)
-//     return true;
-
-//   return false;
-// }
+void sa_print(StrArray sa)
+{
+  for (size_t i = 0; i < sa.size; ++i)
+    printf("%.*s\n", (int)sa.lines[i].size, sa.lines[i].buf);
+}

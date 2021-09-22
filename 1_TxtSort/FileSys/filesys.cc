@@ -16,6 +16,7 @@ ssize_t tfl_fsize(FILE *fp)
 
 int file_to_buf(const char *fname, CharBuf *raw_data)
 {
+  tll_verbose("Opening file: %s\n", fname);
   FILE *fp = fopen(fname, "rb");
   if (nullptr == fp)
   {
