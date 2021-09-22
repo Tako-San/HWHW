@@ -7,7 +7,7 @@
 
 /**
  * @brief caclulates file's size
- * 
+ *
  * @param[in] fp pointer to file
  * @return size of file in case of success, negative value otherwise.
  */
@@ -15,7 +15,7 @@ ssize_t tfl_fsize(FILE *fp);
 
 /**
  * @brief filling buffer with data from file
- * 
+ *
  * @param[in] fname filename
  * @param[out] raw_data buffer to fill
  * @return 0 on success

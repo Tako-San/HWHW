@@ -39,7 +39,7 @@ int tll_error(const char *format, ...);
  * @brief returns exit code
  * @return 0 if no errors occured, -1 otherwise
  */
-int tll_exit_code();
+int tll_exit_code(bool leave = true);
 
 /**
  * @brief function to set logging level

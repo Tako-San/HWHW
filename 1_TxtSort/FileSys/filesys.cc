@@ -21,31 +21,31 @@ int file_to_buf(const char *fname, CharBuf *raw_data)
   if (nullptr == fp)
   {
     tll_error("Error while opening file.\n");
-    return tll_exit_code();
+    return tll_exit_code(false);
   }
 
   ssize_t fsize = tfl_fsize(fp);
   if (fsize < 0)
   {
     tll_error("Can't extract file size.\n");
-    return tll_exit_code();
+    return tll_exit_code(false);
   }
 
   if (nullptr == cb_init(raw_data, fsize))
   {
     tll_error("Error while opening file.\n");
-    return tll_exit_code();
+    return tll_exit_code(false);
   }
 
   tll_verbose("Reading from file\n");
   if (fread(raw_data->buf, sizeof(char), fsize, fp) < fsize)
   {
     tll_error("Error while reading file.\n");
-    return tll_exit_code();
+    return tll_exit_code(false);
   }
 
   tll_verbose("Closing file: %s\n", fname);
   fclose(fp);
 
-  return tll_exit_code();
+  return tll_exit_code(false);
 }

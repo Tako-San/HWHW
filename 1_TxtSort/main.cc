@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
   sa_print(parsed_data);
 
   tll_verbose("Calling destructors...\n");
-  cb_destr(&raw_data);
   sa_destr(&parsed_data);
+  cb_destr(&raw_data);
   return tll_exit_code();
 }

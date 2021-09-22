@@ -45,7 +45,7 @@ CharBuf *cb_destr(CharBuf *cb);
 
 /**
  * @brief StrArray constructor
- * 
+ *
  * @param[out] sa StrArray object
  * @param[in] elnum number of lines
  * @return pointer to input object
@@ -54,7 +54,7 @@ StrArray *sa_init(StrArray *sa, size_t elnum);
 
 /**
  * @brief StrArray destructor
- * 
+ *
  * @param[out] sa StrArray object
  * @return pointer to input object
  */
@@ -62,8 +62,8 @@ StrArray *sa_destr(StrArray *sa);
 
 /**
  * @brief prints string array
- * 
- * @param[in] sa 
+ *
+ * @param[in] sa
  */
 void sa_print(StrArray sa);
 

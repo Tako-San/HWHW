@@ -249,10 +249,10 @@ int tsl_cb_cmp(const void *lhs, const void *rhs)
   for (char *lend = lsym + l.size, *rend = rsym + r.size; (lsym != lend) && (rsym != rend); ++lsym, ++rsym)
   {
     while ((lsym != lend) && (!isalpha(*lsym)))
-        ++lsym;
+      ++lsym;
 
     while ((rsym != rend) && (!isalpha(*rsym)))
-        ++rsym;
+      ++rsym;
 
     if ((lsym == lend) || (rsym == rend))
       break;
