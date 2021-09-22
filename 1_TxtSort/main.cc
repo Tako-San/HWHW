@@ -37,6 +37,12 @@ int main(int argc, char *argv[])
   tll_verbose("Printing sorted text...\n");
   sa_print(parsed_data);
 
+  tll_verbose("Sorting text backwards\n");
+  qsort(parsed_data.lines, parsed_data.size, sizeof(CharBuf), tsl_cb_back_cmp);
+
+  tll_verbose("Printing backwards sorted text...\n");
+  sa_print(parsed_data);
+
   tll_verbose("Calling destructors...\n");
   sa_destr(&parsed_data);
   cb_destr(&raw_data);

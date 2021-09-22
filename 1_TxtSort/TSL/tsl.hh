@@ -123,12 +123,22 @@ StrArray tsl_split_lines(CharBuf raw);
 
 /**
  * @brief comparator for CharBuf strings
- * @param[in] l
- * @param[in] r
+ * @param[in] lhs
+ * @param[in] rhs
  * @return == 0 if elements are equal
- * @return > 0 if l > r
- * @return < 0 if l < r
+ * @return > 0 if lhs > rhs
+ * @return < 0 if lhs < rhs
  */
 int tsl_cb_cmp(const void *lhs, const void *rhs);
+
+/**
+ * @brief backward comparator for CharBuf strings
+ * @param[in] lhs
+ * @param[in] rhs
+ * @return == 0 if elements are equal
+ * @return > 0 if lhs > rhs
+ * @return < 0 if lhs < rhs
+ */
+int tsl_cb_back_cmp(const void *lhs, const void *rhs);
 
 #endif // TSL_HH
