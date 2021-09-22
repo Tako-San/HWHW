@@ -7,7 +7,7 @@ project(TxtSort VERSION 1.1)
 option(BUILD_DOC "Build documentation" ON)
 
 if (CMAKE_BUILD_TYPE MATCHES "^[Dd]ebug")
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address, undefined")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined")
 endif()
 
 # check if Doxygen is installed
@@ -33,15 +33,16 @@ if (CMAKE_BUILD_TYPE MATCHES "^[Rr]elease")
   endif (DOXYGEN_FOUND)
 endif()
 
+# add the executable
+add_executable(TxtSort main.cc)
+
 # add the TSL library
 add_subdirectory(TSL)
 add_subdirectory(TSL/CharBuf)
 add_subdirectory(Trace)
+add_subdirectory(FileSys)
 
-# add the executable
-add_executable(TxtSort main.cc)
-
-target_link_libraries(TxtSort PUBLIC TSL)
+target_link_libraries(TxtSort PUBLIC TLL TSL TFL)
 
 # add the binary tree to the search path for include files
 # so that we will find TxtSortConfig.h
