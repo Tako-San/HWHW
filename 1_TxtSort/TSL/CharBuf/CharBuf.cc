@@ -22,6 +22,26 @@ CharBuf *cb_destr(CharBuf *cb)
   return cb;
 }
 
+StrArray *sa_init(StrArray *sa, size_t elnum)
+{
+  if (nullptr == sa)
+    return nullptr;
+
+  sa->lines = (String *)calloc(elnum, sizeof(String));
+  sa->size = elnum;
+  return sa;
+}
+
+StrArray *sa_destr(StrArray *sa)
+{
+  if (nullptr == sa)
+    return nullptr;
+
+  free(sa->lines);
+  sa->size = 0;
+  return sa;
+}
+
 void sa_print(StrArray sa)
 {
   for (size_t i = 0; i < sa.size; ++i)
