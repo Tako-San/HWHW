@@ -17,5 +17,8 @@ cmake --build . -j`nproc`
 ## Usage
 
 ```bash
-./TxtSort input_file
+./TxtSort input_file [output_file]
 ```
+
+TxtSort writes to `stdout` if output file not provided.
+
