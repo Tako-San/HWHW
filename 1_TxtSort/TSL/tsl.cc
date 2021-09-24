@@ -257,7 +257,7 @@ int tsl_cb_cmp(const void *lhs, const void *rhs)
     if ((lsym == lend) || (rsym == rend))
       break;
 
-    if (*lsym != *rsym)
+    if (tolower(*lsym) != tolower(*rsym))
       break;
   }
 
