@@ -211,7 +211,7 @@ StrArray tsl_split_lines(CharBuf raw)
   tll_verbose("Numder of lines in input file: %zu\n", parsed.size);
 
   parsed.lines = (String *)calloc(parsed.size, sizeof(String));
-  if (!parsed.lines)
+  if (nullptr == parsed.lines)
   {
     tll_error("Memory allocation error\n");
     return {nullptr, 0};
@@ -249,12 +249,38 @@ int tsl_cb_cmp(const void *lhs, const void *rhs)
   for (char *lend = lsym + l.size, *rend = rsym + r.size; (lsym != lend) && (rsym != rend); ++lsym, ++rsym)
   {
     while ((lsym != lend) && (!isalpha(*lsym)))
-        ++lsym;
+      ++lsym;
 
     while ((rsym != rend) && (!isalpha(*rsym)))
-        ++rsym;
+      ++rsym;
 
     if ((lsym == lend) || (rsym == rend))
+      break;
+
+    if (*lsym != *rsym)
+      break;
+  }
+
+  return tolower(*lsym) - tolower(*rsym);
+}
+
+int tsl_cb_back_cmp(const void *lhs, const void *rhs)
+{
+  CharBuf l = *(CharBuf *)lhs;
+  CharBuf r = *(CharBuf *)rhs;
+
+  char *lsym = l.buf + l.size;
+  char *rsym = r.buf + r.size;
+
+  for (char *lend = l.buf, *rend = r.buf; (lsym >= lend) && (rsym >= rend); --lsym, --rsym)
+  {
+    while ((lsym != lend) && (!isalpha(*lsym)))
+      --lsym;
+
+    while ((rsym != rend) && (!isalpha(*rsym)))
+      --rsym;
+
+    if ((lsym > lend) || (rsym > rend))
       break;
 
     if (*lsym != *rsym)

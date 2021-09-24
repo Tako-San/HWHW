@@ -65,12 +65,14 @@ int tll_error(const char *format, ...)
   return res;
 }
 
-int tll_exit_code()
+int tll_exit_code(bool leave)
 {
   if (!IS_FAILED)
     return 0;
 
-  tll_error("Exiting...\n");
+  if (leave)
+    tll_error("Exiting...\n");
+
   return -1;
 }
 

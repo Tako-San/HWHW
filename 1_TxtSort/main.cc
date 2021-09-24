@@ -3,69 +3,57 @@
 #include <string.h>
 
 #include "CharBuf.hh"
+#include "filesys.hh"
 #include "trace.hh"
 #include "tsl.hh"
 
-long file_size(FILE *fp);
-
 int main(int argc, char *argv[])
 {
-  tll_set_log_lvl(TLL_ERR);
-  if (2 != argc)
+  tll_set_log_lvl(TLL_LOG);
+  if ((argc != 3) && (argc != 2))
   {
-    tll_error("USAGE: %s input_file\n", argv[0]);
+    tll_error("USAGE: %s input_file [output_file]\n", argv[0]);
     return tll_exit_code();
   }
 
-  tll_verbose("Opening file: %s\n", argv[1]);
-
-  char *fname = argv[1];
-  FILE *fp = fopen(fname, "rb");
-  if (nullptr == fp)
+  FILE *out_fp = (argc == 2) ? stdout : fopen(argv[2], "wb");
+  if (nullptr == out_fp)
   {
-    tll_error("Error while opening file.\n");
+    tll_error("Error opening output file\n");
     return tll_exit_code();
   }
 
-  size_t fsize = file_size(fp);
   CharBuf raw_data = {nullptr, 0};
-  if (nullptr == cb_init(&raw_data, fsize))
-  {
-    tll_error("Error while opening file.\n");
+  if (file_to_buf(argv[1], &raw_data) != 0)
     return tll_exit_code();
-  }
 
-  tll_verbose("Reading from file\n");
-  if (fread(raw_data.buf, sizeof(char), fsize, fp) < fsize)
-  {
-    tll_error("Error while reading file.\n");
-    return tll_exit_code();
-  }
-  
-  tll_verbose("Closing file: %s\n", argv[1]);
-  fclose(fp);
-
+  tll_verbose("Splitting text to lines\n");
   StrArray parsed_data = tsl_split_lines(raw_data);
+  if (0 == parsed_data.size)
+  {
+    tll_error("Error while splitting file\n");
+    return tll_exit_code();
+  }
 
-  for (size_t i = 0; i < parsed_data.size; ++i)
-    printf("%.*s\n", (int)parsed_data.lines[i].size, parsed_data.lines[i].buf);
+  tll_verbose("Printing original text...\n");
+  sa_print(parsed_data, out_fp);
 
+  tll_verbose("Sorting text\n");
   qsort(parsed_data.lines, parsed_data.size, sizeof(CharBuf), tsl_cb_cmp);
 
-  for (size_t i = 0; i < parsed_data.size; ++i)
-    printf("%.*s\n", (int)parsed_data.lines[i].size, parsed_data.lines[i].buf);
+  tll_verbose("Printing sorted text...\n");
+  sa_print(parsed_data, out_fp);
 
+  tll_verbose("Sorting text backwards\n");
+  qsort(parsed_data.lines, parsed_data.size, sizeof(CharBuf), tsl_cb_back_cmp);
+
+  tll_verbose("Printing backwards sorted text...\n");
+  sa_print(parsed_data, out_fp);
+
+  tll_verbose("Calling destructors...\n");
+  sa_destr(&parsed_data);
   cb_destr(&raw_data);
-  free(parsed_data.lines);
+
+  tll_verbose("Executing finished.\n");
   return tll_exit_code();
-}
-
-long file_size(FILE *fp)
-{
-  if (-1 == fseek(fp, 0L, SEEK_END))
-    return -1;
-  long res = ftell(fp);
-
-  rewind(fp);
-  return res;
 }
