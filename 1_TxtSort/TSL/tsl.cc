@@ -280,10 +280,10 @@ int tsl_cb_back_cmp(const void *lhs, const void *rhs)
     while ((rsym != rend) && (!isalpha(*rsym)))
       --rsym;
 
-    if ((lsym > lend) || (rsym > rend))
+    if ((lsym == lend) || (rsym == rend))
       break;
 
-    if (*lsym != *rsym)
+    if (tolower(*lsym) != tolower(*rsym))
       break;
   }
 
