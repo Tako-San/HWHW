@@ -10,9 +10,16 @@
 int main(int argc, char *argv[])
 {
   tll_set_log_lvl(TLL_LOG);
-  if (2 != argc)
+  if ((argc != 3) && (argc != 2))
   {
-    tll_error("USAGE: %s input_file\n", argv[0]);
+    tll_error("USAGE: %s input_file [output_file]\n", argv[0]);
+    return tll_exit_code();
+  }
+
+  FILE *out_fp = (argc == 2) ? stdout : fopen(argv[2], "wb");
+  if (nullptr == out_fp)
+  {
+    tll_error("Error opening output file\n");
     return tll_exit_code();
   }
 
@@ -29,22 +36,24 @@ int main(int argc, char *argv[])
   }
 
   tll_verbose("Printing original text...\n");
-  sa_print(parsed_data);
+  sa_print(parsed_data, out_fp);
 
   tll_verbose("Sorting text\n");
   qsort(parsed_data.lines, parsed_data.size, sizeof(CharBuf), tsl_cb_cmp);
 
   tll_verbose("Printing sorted text...\n");
-  sa_print(parsed_data);
+  sa_print(parsed_data, out_fp);
 
   tll_verbose("Sorting text backwards\n");
   qsort(parsed_data.lines, parsed_data.size, sizeof(CharBuf), tsl_cb_back_cmp);
 
   tll_verbose("Printing backwards sorted text...\n");
-  sa_print(parsed_data);
+  sa_print(parsed_data, out_fp);
 
   tll_verbose("Calling destructors...\n");
   sa_destr(&parsed_data);
   cb_destr(&raw_data);
+
+  tll_verbose("Executing finished.\n");
   return tll_exit_code();
 }

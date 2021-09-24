@@ -42,8 +42,8 @@ StrArray *sa_destr(StrArray *sa)
   return sa;
 }
 
-void sa_print(StrArray sa)
+void sa_print(StrArray sa, FILE *fp)
 {
   for (size_t i = 0; i < sa.size; ++i)
-    printf("%.*s\n", (int)sa.lines[i].size, sa.lines[i].buf);
+    fprintf(fp, "%.*s\n", (int)sa.lines[i].size, sa.lines[i].buf);
 }

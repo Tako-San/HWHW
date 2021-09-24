@@ -65,6 +65,6 @@ StrArray *sa_destr(StrArray *sa);
  *
  * @param[in] sa
  */
-void sa_print(StrArray sa);
+void sa_print(StrArray sa, FILE *fp = stdout);
 
 #endif // CHAR_BUF_HH
