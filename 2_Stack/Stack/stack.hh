@@ -15,7 +15,7 @@
                                                                                                                        \
     void (*push)(stk_##type *, type);                                                                                  \
     type (*pop)(stk_##type *);                                                                                         \
-    type (*top)(stk_##type *);                                                                                         \
+    type (*top)(const stk_##type *);                                                                                   \
                                                                                                                        \
     stk_##type *(*destroy)(stk_##type *);                                                                              \
   };                                                                                                                   \
@@ -50,7 +50,7 @@
       stk->data_ = (type *)reallocarray(stk->data_, stk->capacity_, sizeof(type));                                     \
     }                                                                                                                  \
                                                                                                                        \
-    assert((stk->data_ != nullptr) && "data array is nullptr");                                                          \
+    assert((stk->data_ != nullptr) && "data array is nullptr");                                                        \
     stk->data_[stk->size_++] = elem;                                                                                   \
   }                                                                                                                    \
                                                                                                                        \
@@ -60,16 +60,15 @@
     return stk->data_[--stk->size_];                                                                                   \
   }                                                                                                                    \
                                                                                                                        \
-  type stk_top_##type(stk_##type *stk)                                                                                 \
+  type stk_top_##type(const stk_##type *stk)                                                                           \
   {                                                                                                                    \
     assert(stk != nullptr);                                                                                            \
-    return stk->data_[--stk->size_];                                                                                   \
+    return stk->data_[stk->size_ - 1];                                                                                 \
   }                                                                                                                    \
                                                                                                                        \
   stk_##type *stk_destroy_##type(stk_##type *stk)                                                                      \
   {                                                                                                                    \
-    if (nullptr == stk)                                                                                                \
-      return nullptr;                                                                                                  \
+    assert(stk != nullptr);                                                                                            \
                                                                                                                        \
     free(stk->data_);                                                                                                  \
     stk->data_ = nullptr;                                                                                              \
@@ -81,29 +80,36 @@
   stk_functions_##type stk_funcs_##type = {&stk_is_empty_##type, &stk_size_##type, &stk_push_##type,                   \
                                            &stk_pop_##type,      &stk_top_##type,  &stk_destroy_##type};               \
                                                                                                                        \
-  stk_##type *new_stk_##type()                                                                                         \
+  void stk_init_##type(stk_##type *stk)                                                                                \
+  {                                                                                                                    \
+    assert(stk != nullptr);                                                                                            \
+    stk->capacity_ = 0;                                                                                                \
+    stk->size_ = 0;                                                                                                    \
+    stk->data_ = nullptr;                                                                                              \
+    stk->functions_ = &stk_funcs_##type;                                                                               \
+  }                                                                                                                    \
+                                                                                                                       \
+  stk_##type *stk_new_##type()                                                                                         \
   {                                                                                                                    \
     stk_##type *res = (stk_##type *)calloc(1, sizeof(stk_##type));                                                     \
     if (nullptr == res)                                                                                                \
       return nullptr;                                                                                                  \
                                                                                                                        \
-    res->capacity_ = 0;                                                                                                \
-    res->size_ = 0;                                                                                                    \
-    res->data_ = nullptr;                                                                                              \
-    res->functions_ = &stk_funcs_##type;                                                                               \
+    stk_init_##type(res);                                                                                                     \
     return res;                                                                                                        \
   }
 
-#define stack(type) stk_##type
+#define Stack(type) stk_##type
 
-#define stk_new(type) new_stk_##type()
-#define stk_destroy(collection) collection->functions_->destroy(collection)
+#define stk_new(type) stk_new_##type()
+#define stk_init(type, stack) stk_init_##type(stack)
+#define stk_destroy(stack) (stack)->functions_->destroy(stack)
 
-#define stk_is_empty(collection) collection->functions_->is_empty(collection)
-#define stk_size(collection) collection->functions_->size(collection)
+#define stk_is_empty(stack) (stack)->functions_->is_empty(stack)
+#define stk_size(stack) (stack)->functions_->size(stack)
 
-#define stk_push(collection, elem) collection->functions_->push(collection, elem)
-#define stk_pop(collection) collection->functions_->pop(collection)
-#define stk_top(collection) collection->functions_->top(collection)
+#define stk_push(stack, elem) (stack)->functions_->push(stack, elem)
+#define stk_pop(stack) (stack)->functions_->pop(stack)
+#define stk_top(stack) (stack)->functions_->top(stack)
 
 #endif // __STACK_HH__
