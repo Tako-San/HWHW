@@ -14,8 +14,8 @@
     size_t (*size)(const stk_##type *);                                                                                \
                                                                                                                        \
     void (*push)(stk_##type *, type);                                                                                  \
-    type (*pop)(stk_##type *);                                                                                         \
     type (*top)(const stk_##type *);                                                                                   \
+    type (*pop)(stk_##type *);                                                                                         \
                                                                                                                        \
     stk_##type *(*destroy)(stk_##type *);                                                                              \
   };                                                                                                                   \
@@ -57,6 +57,15 @@
   type stk_pop_##type(stk_##type *stk)                                                                                 \
   {                                                                                                                    \
     assert(stk != nullptr);                                                                                            \
+                                                                                                                       \
+    size_t third_cap = stk->capacity_ / 3;                                                                             \
+    if (stk->size_ < third_cap)                                                                                        \
+    {                                                                                                                  \
+      stk->capacity_ = third_cap;                                                                                      \
+      stk->data_ = (type *)reallocarray(stk->data_, stk->capacity_, sizeof(type));                                     \
+    }                                                                                                                  \
+                                                                                                                       \
+    assert((stk->data_ != nullptr) && "data array is nullptr");                                                        \
     return stk->data_[--stk->size_];                                                                                   \
   }                                                                                                                    \
                                                                                                                        \
@@ -78,7 +87,7 @@
   }                                                                                                                    \
                                                                                                                        \
   stk_functions_##type stk_funcs_##type = {&stk_is_empty_##type, &stk_size_##type, &stk_push_##type,                   \
-                                           &stk_pop_##type,      &stk_top_##type,  &stk_destroy_##type};               \
+                                           &stk_top_##type,      &stk_pop_##type,  &stk_destroy_##type};               \
                                                                                                                        \
   void stk_init_##type(stk_##type *stk)                                                                                \
   {                                                                                                                    \
@@ -95,7 +104,7 @@
     if (nullptr == res)                                                                                                \
       return nullptr;                                                                                                  \
                                                                                                                        \
-    stk_init_##type(res);                                                                                                     \
+    stk_init_##type(res);                                                                                              \
     return res;                                                                                                        \
   }
 

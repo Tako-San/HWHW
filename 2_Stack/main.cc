@@ -4,19 +4,27 @@
 define_stack(int);
 define_stack(double);
 
+int test();
+
 int main()
+{
+  return test();
+}
+
+int test()
 {
   Stack(int) testStack{};
   stk_init(int, &testStack);
 
-  stk_push(&testStack, 1);
-  stk_push(&testStack, 2);
-  stk_push(&testStack, 3);
-  stk_push(&testStack, 4);
+  for (size_t i = 0; i < 35; ++i)
+    stk_push(&testStack, i);
+
+  printf("Stack(int) size equals to %zu\n", stk_size(&testStack));
 
   while (!stk_is_empty(&testStack))
-    printf("%5d ", stk_pop(&testStack));
+    printf("%d\n", stk_pop(&testStack));
 
+  printf("Stack(int) size equals to %zu\n", stk_size(&testStack));
   stk_destroy(&testStack);
 
   puts("");
@@ -32,8 +40,6 @@ int main()
 
   puts("");
 
-  stk_destroy(dStack);
-  free(dStack);
-
+  free(stk_destroy(dStack));
   return 0;
 }
