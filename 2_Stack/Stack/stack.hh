@@ -2,7 +2,10 @@
 #define __STACK_HH__
 
 #include <assert.h>
+#include <stdint.h>
 #include <stdlib.h>
+
+typedef uint64_t CanaryT;
 
 #define define_stack(type)                                                                                             \
                                                                                                                        \
@@ -22,10 +25,18 @@
                                                                                                                        \
   struct stk_##type                                                                                                    \
   {                                                                                                                    \
+    CanaryT can1_;                                                                                                     \
+                                                                                                                       \
     size_t size_;                                                                                                      \
     size_t capacity_;                                                                                                  \
+                                                                                                                       \
+    CanaryT *owl1_;                                                                                                    \
     type *data_;                                                                                                       \
+    CanaryT *owl2_;                                                                                                    \
+                                                                                                                       \
     stk_functions_##type *functions_;                                                                                  \
+                                                                                                                       \
+    CanaryT can2_;                                                                                                     \
   };                                                                                                                   \
                                                                                                                        \
   bool stk_is_empty_##type(const stk_##type *stk)                                                                      \
@@ -40,15 +51,30 @@
     return stk->size_;                                                                                                 \
   }                                                                                                                    \
                                                                                                                        \
+  void stk_realloc_##type(stk_##type *stk, size_t new_cap)                                                             \
+  {                                                                                                                    \
+    assert(stk != nullptr);                                                                                            \
+                                                                                                                       \
+    stk->capacity_ = new_cap;                                                                                          \
+    CanaryT owl2 = *stk->owl2_;                                                                                        \
+                                                                                                                       \
+    size_t new_size = new_cap * sizeof(type) + 2 * sizeof(CanaryT);                                                    \
+    uint8_t *mem_ptr = (uint8_t *)reallocarray(stk->owl1_, new_size, sizeof(uint8_t));                                 \
+    assert((mem_ptr != nullptr) && "Memory allocation error\n");                                                       \
+                                                                                                                       \
+    stk->owl1_ = (CanaryT *)mem_ptr;                                                                                   \
+    stk->owl2_ = (CanaryT *)(mem_ptr + new_size - sizeof(CanaryT));                                                    \
+    *(stk->owl2_) = owl2;                                                                                              \
+                                                                                                                       \
+    stk->data_ = (type *)(mem_ptr + sizeof(CanaryT));                                                                  \
+  }                                                                                                                    \
+                                                                                                                       \
   void stk_push_##type(stk_##type *stk, type elem)                                                                     \
   {                                                                                                                    \
     assert(stk != nullptr);                                                                                            \
                                                                                                                        \
     if (stk->size_ == stk->capacity_)                                                                                  \
-    {                                                                                                                  \
-      stk->capacity_ = stk->size_ * 2 + 1;                                                                             \
-      stk->data_ = (type *)reallocarray(stk->data_, stk->capacity_, sizeof(type));                                     \
-    }                                                                                                                  \
+      stk_realloc_##type(stk, 2 * stk->size_ + 1);                                                                     \
                                                                                                                        \
     assert((stk->data_ != nullptr) && "data array is nullptr");                                                        \
     stk->data_[stk->size_++] = elem;                                                                                   \
@@ -60,10 +86,7 @@
                                                                                                                        \
     size_t third_cap = stk->capacity_ / 3;                                                                             \
     if (stk->size_ < third_cap)                                                                                        \
-    {                                                                                                                  \
-      stk->capacity_ = third_cap;                                                                                      \
-      stk->data_ = (type *)reallocarray(stk->data_, stk->capacity_, sizeof(type));                                     \
-    }                                                                                                                  \
+      stk_realloc_##type(stk, third_cap);                                                                              \
                                                                                                                        \
     assert((stk->data_ != nullptr) && "data array is nullptr");                                                        \
     return stk->data_[--stk->size_];                                                                                   \
@@ -79,7 +102,7 @@
   {                                                                                                                    \
     assert(stk != nullptr);                                                                                            \
                                                                                                                        \
-    free(stk->data_);                                                                                                  \
+    free(stk->owl1_);                                                                                                  \
     stk->data_ = nullptr;                                                                                              \
     stk->size_ = 0;                                                                                                    \
     stk->capacity_ = 0;                                                                                                \
@@ -92,9 +115,20 @@
   void stk_init_##type(stk_##type *stk)                                                                                \
   {                                                                                                                    \
     assert(stk != nullptr);                                                                                            \
-    stk->capacity_ = 0;                                                                                                \
+                                                                                                                       \
+    stk->can1_ = 0xDEADBEEF;                                                                                           \
+    stk->can2_ = 0xDEADBEEF;                                                                                           \
+                                                                                                                       \
     stk->size_ = 0;                                                                                                    \
-    stk->data_ = nullptr;                                                                                              \
+    stk->capacity_ = 0;                                                                                                \
+                                                                                                                       \
+    stk->owl1_ = (CanaryT *)calloc(2, sizeof(CanaryT));                                                                \
+    assert((stk->owl1_ != nullptr) && "Memory allocation error\n");                                                    \
+    stk->owl2_ = stk->owl1_ + 1;                                                                                       \
+                                                                                                                       \
+    *(stk->owl1_) = 0xDEADBEEF;                                                                                        \
+    *(stk->owl2_) = 0xDEADBEEF;                                                                                        \
+                                                                                                                       \
     stk->functions_ = &stk_funcs_##type;                                                                               \
   }                                                                                                                    \
                                                                                                                        \
