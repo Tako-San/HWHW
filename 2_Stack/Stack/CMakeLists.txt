@@ -1,5 +1,5 @@
 project(Stack)
 
-add_library(STK stack.hh)
+add_library(StackImpl stack.cc)
 
-target_include_directories(STK INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(StackImpl INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

@@ -1,5 +1,6 @@
-#include "stack.hh"
 #include <stdio.h>
+
+#include "stack.hh"
 
 define_stack(int);
 define_stack(double);
