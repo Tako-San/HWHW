@@ -1,5 +1,5 @@
-#ifndef STACK
-#define STACK
+#ifndef __STACK_HH__
+#define __STACK_HH__
 
 #include <assert.h>
 #include <stdint.h>
@@ -136,8 +136,8 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
   {                                                                                                                    \
     assert(stk != nullptr);                                                                                            \
                                                                                                                        \
-    stk->can1_ = stk_can1_val;                                                                                           \
-    stk->can2_ = stk_can2_val;                                                                                           \
+    stk->can1_ = stk_can1_val;                                                                                         \
+    stk->can2_ = stk_can2_val;                                                                                         \
                                                                                                                        \
     stk->size_ = 0;                                                                                                    \
     stk->capacity_ = 0;                                                                                                \
@@ -146,8 +146,8 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     assert((stk->owl1_ != nullptr) && "Memory allocation error\n");                                                    \
     stk->owl2_ = stk->owl1_ + 1;                                                                                       \
                                                                                                                        \
-    *(stk->owl1_) = stk_owl1_val;                                                                                              \
-    *(stk->owl2_) = stk_owl2_val;                                                                                \
+    *(stk->owl1_) = stk_owl1_val;                                                                                      \
+    *(stk->owl2_) = stk_owl2_val;                                                                                      \
                                                                                                                        \
     stk->functions_ = &stk_funcs_##type;                                                                               \
   }                                                                                                                    \
@@ -175,4 +175,4 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
 #define stk_pop(stack) (stack)->functions_->pop(stack)
 #define stk_top(stack) (stack)->functions_->top(stack)
 
-#endif // STACK
+#endif // __STACK_HH__
