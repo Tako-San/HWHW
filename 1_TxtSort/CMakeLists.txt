@@ -6,10 +6,6 @@ project(TxtSort VERSION 1.1)
 # first we can indicate the documentation build as an option and set it to ON by default
 option(BUILD_DOC "Build documentation" ON)
 
-if (CMAKE_BUILD_TYPE MATCHES "^[Dd]ebug")
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined")
-endif()
-
 # check if Doxygen is installed
 if (CMAKE_BUILD_TYPE MATCHES "^[Rr]elease")
   find_package(Doxygen)
@@ -42,16 +38,18 @@ add_subdirectory(TSL/CharBuf)
 add_subdirectory(Trace)
 add_subdirectory(FileSys)
 
-target_link_libraries(TxtSort PUBLIC TLL TSL TFL)
+target_link_libraries(TxtSort PRIVATE TLL TSL TFL)
 
 # add the binary tree to the search path for include files
 # so that we will find TxtSortConfig.h
-target_include_directories(TxtSort PUBLIC
-                          "${PROJECT_BINARY_DIR}"
-                          )
+target_include_directories(TxtSort PRIVATE "${PROJECT_BINARY_DIR}")
 
 # specify standard
-target_compile_features(TxtSort PUBLIC cxx_std_11)
+target_compile_features(TxtSort PRIVATE cxx_std_11)
 
-# add warnings and sanitizers
-target_compile_options(TxtSort PUBLIC -Wall -Wextra)
+# add warnings
+target_compile_options(TxtSort PRIVATE -Wall -Wextra)
+
+# add sanitizers
+target_link_options(TxtSort PRIVATE "$<$<CONFIG:Debug>:-fsanitize=address,undefined>")
+target_compile_options(TxtSort PRIVATE "$<$<CONFIG:Debug>:-fsanitize=address,undefined>")

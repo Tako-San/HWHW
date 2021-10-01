@@ -35,7 +35,7 @@ add_executable(SqEq main.cc SqEq.cc tests.cc)
 
 # add the binary tree to the search path for include files
 # so that we will find SqEqConfig.h
-target_include_directories(SqEq PUBLIC "${PROJECT_BINARY_DIR}")
+target_include_directories(SqEq PRIVATE "${PROJECT_BINARY_DIR}")
 
 # add warnings and sanitizers
-target_compile_options(SqEq INTERFACE "-Wall -Wextra -fsanitize=addres,undefined")
+target_compile_options(SqEq PRIVATE "-Wall -Wextra -fsanitize=addres,undefined")

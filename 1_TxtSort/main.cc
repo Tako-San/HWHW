@@ -35,9 +35,6 @@ int main(int argc, char *argv[])
     return tll_exit_code();
   }
 
-  tll_verbose("Printing original text...\n");
-  sa_print(parsed_data, out_fp);
-
   tll_verbose("Sorting text\n");
   qsort(parsed_data.lines, parsed_data.size, sizeof(CharBuf), tsl_cb_cmp);
 
@@ -49,6 +46,9 @@ int main(int argc, char *argv[])
 
   tll_verbose("Printing backwards sorted text...\n");
   sa_print(parsed_data, out_fp);
+
+  tll_verbose("Printing original text...\n");
+  fprintf(out_fp, "%s", raw_data.buf);
 
   tll_verbose("Calling destructors...\n");
   sa_destr(&parsed_data);
