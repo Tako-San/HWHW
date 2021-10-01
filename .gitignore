@@ -32,11 +32,11 @@
 *.app
 
 # Build directories
-*/build/
+build/
 
 # .vscode directories
-*/.vscode/
+\.vscode/
 
 # Documentation directories
-*/docs/
+docs/
 
