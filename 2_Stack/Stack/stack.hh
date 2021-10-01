@@ -5,8 +5,11 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+typedef uint64_t HashT;
 typedef uint64_t CanaryT;
+
 bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2);
+HashT stk_hash_calc(CanaryT can1, CanaryT can2, CanaryT *owl1p, CanaryT *owl2p, void *data, void *functions);
 
 const CanaryT stk_can1_val = 0xACABBACA;
 const CanaryT stk_can2_val = 0xDEADBEEF;
@@ -14,18 +17,26 @@ const CanaryT stk_can2_val = 0xDEADBEEF;
 const CanaryT stk_owl1_val = 0x89ABCDEF;
 const CanaryT stk_owl2_val = 0xFACAFACA;
 
+enum StkErrCode
+{
+  STK_OK = 0,
+  STK_IS_NULLPTR,
+  STK_MEMORY_ALLOCATION_ERROR,
+  STK_UNKNOWN_ERROR
+};
+
 #define define_stack(type)                                                                                             \
                                                                                                                        \
   struct stk_##type;                                                                                                   \
                                                                                                                        \
   struct stk_functions_##type                                                                                          \
   {                                                                                                                    \
-    bool (*is_empty)(const stk_##type *);                                                                              \
-    size_t (*size)(const stk_##type *);                                                                                \
+    bool (*is_empty)(const stk_##type *, StkErrCode *);                                                                \
+    size_t (*size)(const stk_##type *, StkErrCode *);                                                                  \
                                                                                                                        \
-    void (*push)(stk_##type *, type);                                                                                  \
-    type (*top)(const stk_##type *);                                                                                   \
-    type (*pop)(stk_##type *);                                                                                         \
+    void (*push)(stk_##type *, type, StkErrCode *);                                                                    \
+    type (*top)(const stk_##type *, StkErrCode *);                                                                     \
+    type (*pop)(stk_##type *, StkErrCode *);                                                                           \
                                                                                                                        \
     stk_##type *(*destroy)(stk_##type *);                                                                              \
   };                                                                                                                   \
@@ -46,36 +57,45 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     CanaryT can2_;                                                                                                     \
   };                                                                                                                   \
                                                                                                                        \
-  bool stk_is_valid_##type(const stk_##type *stk)                                                                      \
+  StkErrCode stk_is_valid_##type(const stk_##type *stk)                                                                \
   {                                                                                                                    \
+    if (nullptr == stk)                                                                                                \
+      return STK_IS_NULLPTR;                                                                                           \
+                                                                                                                       \
     bool can = stk_check_canaries(stk->can1_, stk->can2_, *(stk->owl1_), *(stk->owl2_));                               \
-    return can;                                                                                                        \
+    return can ? STK_OK : STK_UNKNOWN_ERROR;                                                                           \
   }                                                                                                                    \
                                                                                                                        \
-  bool stk_is_empty_##type(const stk_##type *stk)                                                                      \
+  bool stk_is_empty_##type(const stk_##type *stk, StkErrCode *ec)                                                      \
   {                                                                                                                    \
-    assert(stk != nullptr);                                                                                            \
-    assert(stk_is_valid_##type(stk));                                                                                  \
+    *ec = stk_is_valid_##type(stk);                                                                                    \
+    if (*ec != STK_OK)                                                                                                 \
+      return true;                                                                                                     \
+                                                                                                                       \
     return (0 == stk->size_);                                                                                          \
   }                                                                                                                    \
                                                                                                                        \
-  size_t stk_size_##type(const stk_##type *stk)                                                                        \
+  size_t stk_size_##type(const stk_##type *stk, StkErrCode *ec)                                                        \
   {                                                                                                                    \
-    assert(stk != nullptr);                                                                                            \
-    assert(stk_is_valid_##type(stk));                                                                                  \
+    *ec = stk_is_valid_##type(stk);                                                                                    \
+    if (*ec != STK_OK)                                                                                                 \
+      return 0;                                                                                                        \
+                                                                                                                       \
     return stk->size_;                                                                                                 \
   }                                                                                                                    \
                                                                                                                        \
-  void stk_realloc_##type(stk_##type *stk, size_t new_cap)                                                             \
+  StkErrCode stk_realloc_##type(stk_##type *stk, size_t new_cap)                                                       \
   {                                                                                                                    \
-    assert(stk != nullptr);                                                                                            \
-    assert(stk_is_valid_##type(stk));                                                                                  \
+    StkErrCode ec = stk_is_valid_##type(stk);                                                                          \
+    if (ec != STK_OK)                                                                                                  \
+      return ec;                                                                                                       \
                                                                                                                        \
     CanaryT owl2 = *stk->owl2_; /* saving canary */                                                                    \
                                                                                                                        \
     size_t new_size = (new_cap * sizeof(type) - 1) / sizeof(CanaryT) + 1; /* size in canaries */                       \
     CanaryT *mem_ptr = (CanaryT *)reallocarray(stk->owl1_, new_size + 2, sizeof(CanaryT));                             \
-    assert((mem_ptr != nullptr) && "Memory allocation error\n");                                                       \
+    if (nullptr == mem_ptr)                                                                                            \
+      return STK_MEMORY_ALLOCATION_ERROR;                                                                              \
                                                                                                                        \
     stk->owl1_ = (CanaryT *)(mem_ptr);                                                                                 \
     stk->owl2_ = (CanaryT *)(mem_ptr + 1 + new_size);                                                                  \
@@ -83,45 +103,60 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
                                                                                                                        \
     stk->capacity_ = new_size * sizeof(CanaryT) / sizeof(type);                                                        \
     stk->data_ = (type *)(mem_ptr + 1);                                                                                \
+    return STK_OK;                                                                                                     \
   }                                                                                                                    \
                                                                                                                        \
-  void stk_push_##type(stk_##type *stk, type elem)                                                                     \
+  void stk_push_##type(stk_##type *stk, type elem, StkErrCode *ec)                                                     \
   {                                                                                                                    \
-    assert(stk != nullptr);                                                                                            \
-    assert(stk_is_valid_##type(stk));                                                                                  \
+    *ec = stk_is_valid_##type(stk);                                                                                    \
+    if (*ec != STK_OK)                                                                                                 \
+      return;                                                                                                          \
                                                                                                                        \
     if (stk->size_ == stk->capacity_)                                                                                  \
-      stk_realloc_##type(stk, 2 * stk->size_ + 1);                                                                     \
+    {                                                                                                                  \
+      *ec = stk_realloc_##type(stk, 2 * stk->size_ + 1);                                                               \
+      if (*ec != STK_OK)                                                                                               \
+        return;                                                                                                        \
+    }                                                                                                                  \
                                                                                                                        \
     assert((stk->data_ != nullptr) && "data array is nullptr");                                                        \
     stk->data_[stk->size_++] = elem;                                                                                   \
   }                                                                                                                    \
                                                                                                                        \
-  type stk_pop_##type(stk_##type *stk)                                                                                 \
+  type stk_pop_##type(stk_##type *stk, StkErrCode *ec)                                                                 \
   {                                                                                                                    \
-    assert(stk != nullptr);                                                                                            \
-    assert(stk_is_valid_##type(stk));                                                                                  \
+    *ec = stk_is_valid_##type(stk);                                                                                    \
+    if (*ec != STK_OK)                                                                                                 \
+      return {};                                                                                                       \
                                                                                                                        \
     size_t third_cap = stk->capacity_ / 3;                                                                             \
     if (stk->size_ < third_cap)                                                                                        \
-      stk_realloc_##type(stk, third_cap);                                                                              \
+    {                                                                                                                  \
+      *ec = stk_realloc_##type(stk, third_cap);                                                                        \
+      if (*ec != STK_OK)                                                                                               \
+        return {};                                                                                                     \
                                                                                                                        \
-    assert((stk->data_ != nullptr) && "data array is nullptr");                                                        \
+      if (nullptr == stk->data_)                                                                                       \
+      {                                                                                                                \
+        *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                             \
+        return {};                                                                                                     \
+      }                                                                                                                \
+    }                                                                                                                  \
+                                                                                                                       \
     return stk->data_[--stk->size_];                                                                                   \
   }                                                                                                                    \
                                                                                                                        \
-  type stk_top_##type(const stk_##type *stk)                                                                           \
+  type stk_top_##type(const stk_##type *stk, StkErrCode *ec)                                                           \
   {                                                                                                                    \
-    assert(stk != nullptr);                                                                                            \
-    assert(stk_is_valid_##type(stk));                                                                                  \
+    *ec = stk_is_valid_##type(stk);                                                                                    \
+    if (*ec != STK_OK)                                                                                                 \
+      return {};                                                                                                       \
+                                                                                                                       \
     return stk->data_[stk->size_ - 1];                                                                                 \
   }                                                                                                                    \
                                                                                                                        \
   stk_##type *stk_destroy_##type(stk_##type *stk)                                                                      \
   {                                                                                                                    \
-    assert(stk != nullptr);                                                                                            \
-    assert(stk_is_valid_##type(stk));                                                                                  \
-                                                                                                                       \
     free(stk->owl1_);                                                                                                  \
     stk->data_ = nullptr;                                                                                              \
     stk->size_ = 0;                                                                                                    \
@@ -132,9 +167,13 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
   stk_functions_##type stk_funcs_##type = {&stk_is_empty_##type, &stk_size_##type, &stk_push_##type,                   \
                                            &stk_top_##type,      &stk_pop_##type,  &stk_destroy_##type};               \
                                                                                                                        \
-  void stk_init_##type(stk_##type *stk)                                                                                \
+  void stk_init_##type(stk_##type *stk, StkErrCode *ec)                                                                \
   {                                                                                                                    \
-    assert(stk != nullptr);                                                                                            \
+    if (nullptr == stk)                                                                                                \
+    {                                                                                                                  \
+      *ec = STK_IS_NULLPTR;                                                                                            \
+      return;                                                                                                          \
+    }                                                                                                                  \
                                                                                                                        \
     stk->can1_ = stk_can1_val;                                                                                         \
     stk->can2_ = stk_can2_val;                                                                                         \
@@ -143,7 +182,12 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     stk->capacity_ = 0;                                                                                                \
                                                                                                                        \
     stk->owl1_ = (CanaryT *)calloc(2, sizeof(CanaryT));                                                                \
-    assert((stk->owl1_ != nullptr) && "Memory allocation error\n");                                                    \
+    if (stk->owl1_ == nullptr)                                                                                         \
+    {                                                                                                                  \
+      *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                               \
+      return;                                                                                                          \
+    }                                                                                                                  \
+                                                                                                                       \
     stk->owl2_ = stk->owl1_ + 1;                                                                                       \
                                                                                                                        \
     *(stk->owl1_) = stk_owl1_val;                                                                                      \
@@ -152,27 +196,30 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     stk->functions_ = &stk_funcs_##type;                                                                               \
   }                                                                                                                    \
                                                                                                                        \
-  stk_##type *stk_new_##type()                                                                                         \
+  stk_##type *stk_new_##type(StkErrCode *ec)                                                                           \
   {                                                                                                                    \
     stk_##type *res = (stk_##type *)calloc(1, sizeof(stk_##type));                                                     \
     if (nullptr == res)                                                                                                \
+    {                                                                                                                  \
+      *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                               \
       return nullptr;                                                                                                  \
+    }                                                                                                                  \
                                                                                                                        \
-    stk_init_##type(res);                                                                                              \
+    stk_init_##type(res, ec);                                                                                          \
     return res;                                                                                                        \
   }
 
 #define Stack(type) stk_##type
 
-#define stk_new(type) stk_new_##type()
-#define stk_init(type, stack) stk_init_##type(stack)
+#define stk_new(type, err_code) stk_new_##type(err_code)
+#define stk_init(type, stack, err_code) stk_init_##type(stack, err_code)
 #define stk_destroy(stack) (stack)->functions_->destroy(stack)
 
-#define stk_is_empty(stack) (stack)->functions_->is_empty(stack)
-#define stk_size(stack) (stack)->functions_->size(stack)
+#define stk_is_empty(stack, err_code) (stack)->functions_->is_empty(stack, err_code)
+#define stk_size(stack, err_code) (stack)->functions_->size(stack, err_code)
 
-#define stk_push(stack, elem) (stack)->functions_->push(stack, elem)
-#define stk_pop(stack) (stack)->functions_->pop(stack)
-#define stk_top(stack) (stack)->functions_->top(stack)
+#define stk_push(stack, elem, err_code) (stack)->functions_->push(stack, elem, err_code)
+#define stk_pop(stack, err_code) (stack)->functions_->pop(stack, err_code)
+#define stk_top(stack, err_code) (stack)->functions_->top(stack, err_code)
 
 #endif // __STACK_HH__

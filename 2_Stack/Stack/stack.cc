@@ -9,3 +9,7 @@ bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2)
 #endif
 }
 
+HashT stk_hash_calc(CanaryT can1, CanaryT can2, CanaryT *owl1p, CanaryT *owl2p, void *data, void *functions)
+{
+  return can1 * can2 * (HashT)owl1p * (HashT)owl2p * (HashT)data * (HashT)functions;
+}
