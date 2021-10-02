@@ -47,9 +47,11 @@ target_include_directories(TxtSort PRIVATE "${PROJECT_BINARY_DIR}")
 # specify standard
 target_compile_features(TxtSort PRIVATE cxx_std_11)
 
+include(cmake/warns.cmake)
+
 # add warnings
-target_compile_options(TxtSort PRIVATE -Wall -Wextra)
+target_compile_options(TxtSort PRIVATE ${DED_GCC_WARNS})
 
 # add sanitizers
-target_link_options(TxtSort PRIVATE "$<$<CONFIG:Debug>:-fsanitize=address,undefined>")
-target_compile_options(TxtSort PRIVATE "$<$<CONFIG:Debug>:-fsanitize=address,undefined>")
+target_link_options(TxtSort PRIVATE "$<$<CONFIG:Debug>:${DED_SAN}>")
+target_compile_options(TxtSort PRIVATE "$<$<CONFIG:Debug>:${DED_SAN}>")
