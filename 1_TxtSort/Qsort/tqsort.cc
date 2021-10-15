@@ -4,9 +4,9 @@
 
 #include "tqsort.hh"
 
-void tqs_swap_ui8(uint8_t *l, uint8_t *r)
+void tqs_swap_ui8(uint8_t **l, uint8_t **r)
 {
-  uint8_t tmp = *l;
+  uint8_t *tmp = *l;
   *l = *r;
   *r = tmp;
 }
@@ -15,24 +15,24 @@ void tqs_swap(void *l, void *r, size_t size)
 {
   uint8_t tmp[size] = {};
 
-  memmove(&tmp, l, size);
-  memmove(l, r, size);
-  memmove(r, &tmp, size);
+  memcpy(&tmp, l, size);
+  memcpy(l, r, size);
+  memcpy(r, &tmp, size);
 }
 
-void tqsort_impl(void *void_base, size_t size, tqs_cmp compar, size_t l, size_t r)
+void tqsort_impl(void *void_base, size_t size, tqs_cmp compar, int l, int r)
 {
   uint8_t *base = (uint8_t *)void_base;
-  size_t i = l, j = r;
-  size_t m = (l + r) / 2;
+  int i = l, j = r;
+  int m = (l + r) / 2;
 
   uint8_t *pp[3] = {base + l * size, base + r * size, base + m * size};
   if (compar((void *)pp[0], (void *)pp[1]) < 0)
-    tqs_swap_ui8(pp[0], pp[1]);
+    tqs_swap_ui8(&pp[0], &pp[1]);
   if (compar((void *)pp[1], (void *)pp[2]) < 0)
-    tqs_swap_ui8(pp[1], pp[2]);
+    tqs_swap_ui8(&pp[1], &pp[2]);
   if (compar((void *)pp[0], (void *)pp[1]) < 0)
-    tqs_swap_ui8(pp[0], pp[1]);
+    tqs_swap_ui8(&pp[0], &pp[1]);
 
   uint8_t *p = pp[1];
   while (i <= j)

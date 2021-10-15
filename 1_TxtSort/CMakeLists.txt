@@ -39,7 +39,7 @@ add_subdirectory(Trace)
 add_subdirectory(FileSys)
 add_subdirectory(Qsort)
 
-target_link_libraries(TxtSort PRIVATE TLL TSL TFL)
+target_link_libraries(TxtSort PRIVATE TLL TSL TFL TQS)
 
 # add the binary tree to the search path for include files
 # so that we will find TxtSortConfig.h
