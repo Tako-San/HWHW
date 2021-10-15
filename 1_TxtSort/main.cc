@@ -4,6 +4,7 @@
 
 #include "CharBuf.hh"
 #include "filesys.hh"
+#include "tqsort.hh"
 #include "trace.hh"
 #include "tsl.hh"
 
@@ -42,7 +43,7 @@ int main(int argc, char *argv[])
   sa_print(parsed_data, out_fp);
 
   tll_verbose("Sorting text backwards\n");
-  qsort(parsed_data.lines, parsed_data.size, sizeof(CharBuf), tsl_cb_back_cmp);
+  tqsort(parsed_data.lines, parsed_data.size, sizeof(CharBuf), tsl_cb_back_cmp);
 
   tll_verbose("Printing backwards sorted text...\n");
   sa_print(parsed_data, out_fp);
