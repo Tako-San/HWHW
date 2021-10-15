@@ -269,22 +269,27 @@ int tsl_cb_back_cmp(const void *lhs, const void *rhs)
   CharBuf l = *(CharBuf *)lhs;
   CharBuf r = *(CharBuf *)rhs;
 
-  char *lsym = l.buf + l.size;
-  char *rsym = r.buf + r.size;
+  // if ((r.size == 0) && (l.size == 0))
+  //   return 0;
+  // if (r.size == 0)
+  //   return 1;
+  // if (l.size == 0)
+  //   return -1;
 
-  for (char *lend = l.buf, *rend = r.buf; (lsym >= lend) && (rsym >= rend); --lsym, --rsym)
+  char *lsym = l.buf + l.size - 1;
+  char *rsym = r.buf + r.size - 1;
+
+  for (char *lend = l.buf, *rend = r.buf; (lsym > lend) && (rsym > rend); --lsym, --rsym)
   {
-    while ((lsym != lend) && (!isalpha(*lsym)))
+    while ((lsym > lend) && (!isalpha(*lsym)))
       --lsym;
 
-    while ((rsym != rend) && (!isalpha(*rsym)))
+    while ((rsym > rend) && (!isalpha(*rsym)))
       --rsym;
 
-    if ((lsym == lend) || (rsym == rend))
-      break;
-
-    if (tolower(*lsym) != tolower(*rsym))
-      break;
+    int res = tolower(*lsym) - tolower(*rsym);
+    if (res != 0)
+      return res;
   }
 
   return tolower(*lsym) - tolower(*rsym);

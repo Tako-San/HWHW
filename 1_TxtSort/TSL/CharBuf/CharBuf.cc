@@ -45,5 +45,6 @@ StrArray *sa_destr(StrArray *sa)
 void sa_print(StrArray sa, FILE *fp)
 {
   for (size_t i = 0; i < sa.size; ++i)
+    // fprintf(fp, "line.size == %zu; line.buf == %p :> ", sa.lines[i].size, sa.lines[i].buf);
     fprintf(fp, "%.*s\n", (int)sa.lines[i].size, sa.lines[i].buf);
 }
