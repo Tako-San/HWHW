@@ -11,22 +11,22 @@ void tqs_swap_ui8(uint8_t **l, uint8_t **r)
   *r = tmp;
 }
 
-void tqs_swap(void *l, void *r, size_t size)
+void tqs_swap(void *left, void *right, size_t size)
 {
   uint8_t tmp[size] = {};
 
-  memcpy(&tmp, l, size);
-  memcpy(l, r, size);
-  memcpy(r, &tmp, size);
+  memcpy(&tmp, left, size);
+  memcpy(left, right, size);
+  memcpy(right, &tmp, size);
 }
 
-void tqsort_impl(void *void_base, size_t size, tqs_cmp compar, int l, int r)
+void tqsort_impl(void *void_base, size_t size, tqs_cmp compar, int left, int right)
 {
   uint8_t *base = (uint8_t *)void_base;
-  int i = l, j = r;
-  int m = (l + r) / 2;
+  int l_idx = left, r_idx = right;
+  int pivot = (left + right) / 2;
 
-  uint8_t *pp[3] = {base + l * size, base + r * size, base + m * size};
+  uint8_t *pp[3] = {base + left * size, base + right * size, base + pivot * size};
   if (compar((void *)pp[0], (void *)pp[1]) < 0)
     tqs_swap_ui8(&pp[0], &pp[1]);
   if (compar((void *)pp[1], (void *)pp[2]) < 0)
@@ -35,23 +35,23 @@ void tqsort_impl(void *void_base, size_t size, tqs_cmp compar, int l, int r)
     tqs_swap_ui8(&pp[0], &pp[1]);
 
   uint8_t *p = pp[1];
-  while (i <= j)
+  while (l_idx <= r_idx)
   {
-    while (compar((void *)p, (void *)(base + i * size)) > 0)
-      i++;
-    while (compar((void *)p, (void *)(base + j * size)) < 0)
-      j--;
-    if (i <= j)
+    while (compar((void *)p, (void *)(base + l_idx * size)) > 0)
+      l_idx++;
+    while (compar((void *)p, (void *)(base + r_idx * size)) < 0)
+      r_idx--;
+    if (l_idx <= r_idx)
     {
-      tqs_swap(base + i * size, base + j * size, size);
-      i++;
-      j--;
+      tqs_swap(base + l_idx * size, base + r_idx * size, size);
+      l_idx++;
+      r_idx--;
     }
   }
-  if (l < j)
-    tqsort_impl(void_base, size, compar, l, j);
-  if (i < r)
-    tqsort_impl(void_base, size, compar, i, r);
+  if (left < r_idx)
+    tqsort_impl(void_base, size, compar, left, r_idx);
+  if (l_idx < right)
+    tqsort_impl(void_base, size, compar, l_idx, right);
 }
 
 void tqsort(void *base, size_t nmemb, size_t size, tqs_cmp compar)
