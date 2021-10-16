@@ -9,7 +9,8 @@ typedef uint64_t HashT;
 typedef uint64_t CanaryT;
 
 bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2);
-HashT stk_hash_calc(CanaryT can1, CanaryT can2, CanaryT *owl1p, CanaryT *owl2p, void *data, void *functions);
+bool stk_check_hash(HashT hash, const void *from, const void *to);
+HashT stk_hash_calc(const void *from_void, const void *to_void);
 
 const CanaryT stk_can1_val = 0xACABBACA;
 const CanaryT stk_can2_val = 0xDEADBEEF;
@@ -54,6 +55,10 @@ enum StkErrCode
                                                                                                                        \
     stk_functions_##type *functions_;                                                                                  \
                                                                                                                        \
+    HashT data_hash_;                                                                                                  \
+    HashT func_hash_;                                                                                                  \
+    HashT struct_hash_;                                                                                                \
+                                                                                                                       \
     CanaryT can2_;                                                                                                     \
   };                                                                                                                   \
                                                                                                                        \
@@ -63,7 +68,17 @@ enum StkErrCode
       return STK_IS_NULLPTR;                                                                                           \
                                                                                                                        \
     bool can = stk_check_canaries(stk->can1_, stk->can2_, *(stk->owl1_), *(stk->owl2_));                               \
-    return can ? STK_OK : STK_UNKNOWN_ERROR;                                                                           \
+    bool data_hash = stk_check_hash(stk->data_hash_, stk->data_, stk->data_ + stk->size_);                             \
+    bool func_hash = stk_check_hash(stk->func_hash_, stk->functions_, stk->functions_ + sizeof(stk_functions_##type)); \
+    bool struct_hash = stk_check_hash(stk->struct_hash_, stk, &(stk->struct_hash_));                                   \
+                                                                                                                       \
+    return (can && data_hash && func_hash && struct_hash) ? STK_OK : STK_UNKNOWN_ERROR;                                \
+  }                                                                                                                    \
+                                                                                                                       \
+  void stk_hash_recalc_##type(stk_##type *stk)                                                                         \
+  {                                                                                                                    \
+    stk->data_hash_ = stk_hash_calc(stk->data_, stk->data_ + stk->size_);                                              \
+    stk->struct_hash_ = stk_hash_calc(stk, &(stk->struct_hash_));                                                      \
   }                                                                                                                    \
                                                                                                                        \
   bool stk_is_empty_##type(const stk_##type *stk, StkErrCode *ec)                                                      \
@@ -97,12 +112,13 @@ enum StkErrCode
     if (nullptr == mem_ptr)                                                                                            \
       return STK_MEMORY_ALLOCATION_ERROR;                                                                              \
                                                                                                                        \
-    stk->owl1_ = (CanaryT *)(mem_ptr);                                                                                 \
-    stk->owl2_ = (CanaryT *)(mem_ptr + 1 + new_size);                                                                  \
+    stk->owl1_ = mem_ptr;                                                                                              \
+    stk->owl2_ = mem_ptr + 1 + new_size;                                                                               \
     *(stk->owl2_) = owl2;                                                                                              \
                                                                                                                        \
     stk->capacity_ = new_size * sizeof(CanaryT) / sizeof(type);                                                        \
     stk->data_ = (type *)(mem_ptr + 1);                                                                                \
+    stk_hash_recalc_##type(stk);                                                                                       \
     return STK_OK;                                                                                                     \
   }                                                                                                                    \
                                                                                                                        \
@@ -121,6 +137,7 @@ enum StkErrCode
                                                                                                                        \
     assert((stk->data_ != nullptr) && "data array is nullptr");                                                        \
     stk->data_[stk->size_++] = elem;                                                                                   \
+    stk_hash_recalc_##type(stk);                                                                                       \
   }                                                                                                                    \
                                                                                                                        \
   type stk_pop_##type(stk_##type *stk, StkErrCode *ec)                                                                 \
@@ -143,7 +160,9 @@ enum StkErrCode
       }                                                                                                                \
     }                                                                                                                  \
                                                                                                                        \
-    return stk->data_[--stk->size_];                                                                                   \
+    stk->size_ -= 1;                                                                                                   \
+    stk_hash_recalc_##type(stk);                                                                                       \
+    return stk->data_[stk->size_];                                                                                 \
   }                                                                                                                    \
                                                                                                                        \
   type stk_top_##type(const stk_##type *stk, StkErrCode *ec)                                                           \
@@ -161,6 +180,7 @@ enum StkErrCode
     stk->data_ = nullptr;                                                                                              \
     stk->size_ = 0;                                                                                                    \
     stk->capacity_ = 0;                                                                                                \
+    stk_hash_recalc_##type(stk);                                                                                       \
     return stk;                                                                                                        \
   }                                                                                                                    \
                                                                                                                        \
@@ -194,6 +214,10 @@ enum StkErrCode
     *(stk->owl2_) = stk_owl2_val;                                                                                      \
                                                                                                                        \
     stk->functions_ = &stk_funcs_##type;                                                                               \
+                                                                                                                       \
+    stk->data_hash_ = stk_hash_calc(stk->data_, stk->data_ + stk->size_);                                              \
+    stk->func_hash_ = stk_hash_calc(stk->functions_, stk->functions_ + sizeof(stk_functions_##type));                  \
+    stk->struct_hash_ = stk_hash_calc(stk, &(stk->struct_hash_));                                                      \
   }                                                                                                                    \
                                                                                                                        \
   stk_##type *stk_new_##type(StkErrCode *ec)                                                                           \

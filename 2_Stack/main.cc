@@ -18,7 +18,7 @@ int test()
   StkErrCode err_code = STK_OK;
   stk_init(int, &testStack, &err_code);
 
-  for (size_t i = 0; i < 35; ++i)
+  for (int i = 0; i < 35; ++i)
     stk_push(&testStack, i, &err_code);
 
   printf("Stack(int) size equals to %zu\n", stk_size(&testStack, &err_code));
