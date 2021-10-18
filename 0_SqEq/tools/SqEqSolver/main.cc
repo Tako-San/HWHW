@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "SqEq.h"
-#include "SqEqConfig.h"
+#include "SqEq.hh"
+#include "SqEqConfig.hh"
 
 void print_greeting();
 int print_exit_msg(const char *msg);

@@ -1,3 +1,0 @@
-// the configured options and settings for SQEQ
-#define SqEq_VERSION_MAJOR @SqEq_VERSION_MAJOR@
-#define SqEq_VERSION_MINOR @SqEq_VERSION_MINOR@
