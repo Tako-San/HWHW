@@ -8,7 +8,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "SqEq.h"
+#include "SqEq.hh"
 
 bool read_coeffs(const char *prompt, double coeffs[COEFF_NUM])
 {

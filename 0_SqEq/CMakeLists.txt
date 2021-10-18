@@ -1,13 +1,15 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
+
 
 # set the project name
-project(SqEq VERSION 1.1)
+project(MathProject VERSION 1.2)
 
 # configure header for version print
-configure_file(SqEqConfig.h.in SqEqConfig.h)
+configure_file(SqEqConfig.hh.in SqEqConfig.hh)
 
 # first we can indicate the documentation build as an option and set it to ON by default
 option(BUILD_DOC "Build documentation" ON)
+
 
 # check if Doxygen is installed
 find_package(Doxygen)
@@ -30,12 +32,29 @@ else (DOXYGEN_FOUND)
   message("Doxygen need to be installed to generate the doxygen documentation")
 endif (DOXYGEN_FOUND)
 
-# add the executable
-add_executable(SqEq main.cc SqEq.cc tests.cc)
 
-# add the binary tree to the search path for include files
-# so that we will find SqEqConfig.h
-target_include_directories(SqEq PRIVATE "${PROJECT_BINARY_DIR}")
+# collecting libs
+add_subdirectory(lib)
+message(STATUS "Collected libs: ${LIBLIST}")
 
-# add warnings and sanitizers
-target_compile_options(SqEq PRIVATE "-Wall -Wextra -fsanitize=addres,undefined")
+# common includes
+foreach(LIB ${LIBLIST})
+  target_include_directories(${LIB} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/${LIB})
+  target_include_directories(${LIB} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+endforeach()
+
+
+# collecting tools
+add_subdirectory(tools)
+message(STATUS "Collected tools: ${TOOLLIST}")
+
+# link all libraries to every tool -- just in case
+foreach(TOOL ${TOOLLIST})
+  target_include_directories(${TOOL} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/${TOOL})
+  target_include_directories(${TOOL} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_link_libraries(${TOOL} ${LIBLIST})
+  install(TARGETS ${TOOL} DESTINATION bin)
+endforeach()
+
+
+install()

@@ -1,6 +1,10 @@
 /**
  * @brief return this from main on error
  */
+
+#ifndef SQEQ
+#define SQEQ
+
 #define SQEQ_ERROR 1
 
 /**
@@ -95,3 +99,6 @@ int ret_code(int res_type);
  * @return false if tests not passed
  */
 bool unit_testing();
+
+
+#endif // SQEQ

@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "SqEq.h"
+#include "SqEq.hh"
 
 static bool linear_check(int res_type, int ans_res_type, double val, double ans, const char *msg)
 {
