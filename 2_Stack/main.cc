@@ -43,5 +43,10 @@ int test()
   puts("");
 
   free(stk_destroy(dStack));
+
+  dStack = stk_new(double, &err_code);
+  stk_push(dStack, 1, &err_code);
+  printf("pop1: %lf", stk_pop(dStack, &err_code)); 
+  printf("pop2: %lf", stk_pop(dStack, &err_code)); 
   return 0;
 }

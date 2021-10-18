@@ -31,7 +31,7 @@ bool stk_check_hash(HashT hash, const void *from, const void *to)
 #else
   bool res = (hash == stk_hash_calc(from, to));
   if (!res)
-    printf("Hashes not equal\n");
+    printf("Hashes are not equal\n");
 
   return hash == stk_hash_calc(from, to);
 #endif

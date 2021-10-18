@@ -8,16 +8,6 @@
 typedef uint64_t HashT;
 typedef uint64_t CanaryT;
 
-bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2);
-bool stk_check_hash(HashT hash, const void *from, const void *to);
-HashT stk_hash_calc(const void *from_void, const void *to_void);
-
-const CanaryT stk_can1_val = 0xACABBACA;
-const CanaryT stk_can2_val = 0xDEADBEEF;
-
-const CanaryT stk_owl1_val = 0x89ABCDEF;
-const CanaryT stk_owl2_val = 0xFACAFACA;
-
 enum StkErrCode
 {
   STK_OK = 0,
@@ -25,6 +15,19 @@ enum StkErrCode
   STK_MEMORY_ALLOCATION_ERROR,
   STK_UNKNOWN_ERROR
 };
+
+bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2);
+
+bool stk_check_hash(HashT hash, const void *from, const void *to);
+HashT stk_hash_calc(const void *from_void, const void *to_void);
+
+void stk_print_errors(StkErrCode ec);
+
+const CanaryT stk_can1_val = 0xACABBACA;
+const CanaryT stk_can2_val = 0xDEADBEEF;
+
+const CanaryT stk_owl1_val = 0x89ABCDEF;
+const CanaryT stk_owl2_val = 0xFACAFACA;
 
 #define define_stack(type)                                                                                             \
                                                                                                                        \
@@ -162,7 +165,7 @@ enum StkErrCode
                                                                                                                        \
     stk->size_ -= 1;                                                                                                   \
     stk_hash_recalc_##type(stk);                                                                                       \
-    return stk->data_[stk->size_];                                                                                 \
+    return stk->data_[stk->size_];                                                                                     \
   }                                                                                                                    \
                                                                                                                        \
   type stk_top_##type(const stk_##type *stk, StkErrCode *ec)                                                           \
