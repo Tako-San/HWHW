@@ -2,21 +2,29 @@
 
 ## Build
 
-From `0_SQEQ` directory:
+From `0_SqEq` directory:
 
 ```bash
 mkdir build
 cd build
 cmake ..
-make -j`nproc`
+cmake --build . -j`nproc`
+```
+
+## Install
+
+From build directory:
+```bash
+sudo cmake --install .
 ```
 
 ## Run
 
-From `0_SQEQ` directory:
+After installation:
 
 ```bash
-./build/SqEq
+SqEqSolver
+# doing your stuff
 ```
 
 ## Docs
