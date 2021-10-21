@@ -29,11 +29,14 @@ SqEqSolver
 
 ## Docs
 
-After building project do:
+To build documentation use `BUILD_DOC` option.
+From build directory:
 
 ```bash
+cmake -DBUILD_DOC=ON ..
+cmake --build .
 cd docs/latex
 make -j`nproc`
 ```
 
-and open refmain.pdf file.
+after that open refman.pdf file.
