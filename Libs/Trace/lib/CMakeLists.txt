@@ -7,7 +7,7 @@ set_target_properties(TLL PROPERTIES PUBLIC_HEADER "${CMAKE_SOURCE_DIR}/include/
 
 target_include_directories(TLL PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include> 
-    $<INSTALL_INTERFACE:include/TLL>  # <prefix>/include/mylib
+    $<INSTALL_INTERFACE:include/TLL>
 )
 
 install(TARGETS TLL EXPORT TLLTargets
