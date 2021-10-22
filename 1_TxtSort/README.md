@@ -17,8 +17,21 @@ cmake --build . -j`nproc`
 ## Usage
 
 ```bash
-./TxtSort input_file [output_file]
+./onegin input_file [output_file]
 ```
 
-TxtSort writes to `stdout` if output file not provided.
+`onegin` writes to `stdout` if output file not provided.
 
+## Docs
+
+To build documentation use `BUILD_DOC` option.
+From build directory:
+
+```bash
+cmake -DBUILD_DOC=ON ..
+cmake --build .
+cd docs/latex
+make -j`nproc`
+```
+
+after that open refman.pdf file.
