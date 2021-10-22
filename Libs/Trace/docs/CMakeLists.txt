@@ -30,6 +30,7 @@ if (BUILD_DOC)
 
   set(DOXYGEN_FULL_PATH_NAMES YES)
   set(DOXYGEN_STRIP_FROM_PATH ../)
+  set(DOXYGEN_LATEX_SOURCE_CODE YES)
   
   doxygen_add_docs(doc
     "${CMAKE_SOURCE_DIR}"
