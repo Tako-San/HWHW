@@ -55,6 +55,9 @@ int main(int argc, char *argv[])
   sa_destr(&parsed_data);
   cb_destr(&raw_data);
 
+  if (argc == 2)
+    fclose(out_fp);
+
   tll_verbose("Executing finished.\n");
   return tll_exit_code();
 }

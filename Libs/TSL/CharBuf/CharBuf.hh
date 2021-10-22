@@ -1,6 +1,7 @@
 #ifndef CHAR_BUF_HH
 #define CHAR_BUF_HH
 
+#include <stdio.h>
 #include <stdlib.h>
 
 /**
