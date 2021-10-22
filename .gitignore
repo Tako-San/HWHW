@@ -35,8 +35,8 @@
 build/
 
 # .vscode directories
-\.vscode/
+.vscode/
 
 # Documentation directories
-docs/
-
+html/
+latex/
