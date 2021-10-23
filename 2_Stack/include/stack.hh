@@ -28,13 +28,15 @@ bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2);
 bool stk_check_hash(HashT hash, const void *from, const void *to);
 HashT stk_hash_calc(const void *from_void, const void *to_void);
 
-const char *stk_print_errors(StkErrCode ec, FILE *fstream = stdout);
+const char *stk_print_errors(StkErrCode ec);
 
 const CanaryT stk_can1_val = 0xACABBACA;
 const CanaryT stk_can2_val = 0xDEADBEEF;
 
 const CanaryT stk_owl1_val = 0x89ABCDEF;
 const CanaryT stk_owl2_val = 0xFACAFACA;
+
+extern FILE *STK_ERR;
 
 #define define_stack(type)                                                                                             \
                                                                                                                        \
@@ -102,7 +104,10 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
   {                                                                                                                    \
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
+    {                                                                                                                  \
+      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
       return true;                                                                                                     \
+    }                                                                                                                  \
                                                                                                                        \
     return (0 == stk->size_);                                                                                          \
   }                                                                                                                    \
@@ -111,7 +116,10 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
   {                                                                                                                    \
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
+    {                                                                                                                  \
+      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
       return 0;                                                                                                        \
+    }                                                                                                                  \
                                                                                                                        \
     return stk->size_;                                                                                                 \
   }                                                                                                                    \
@@ -120,7 +128,10 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
   {                                                                                                                    \
     StkErrCode ec = stk_is_valid_##type(stk);                                                                          \
     if (ec != STK_OK)                                                                                                  \
+    {                                                                                                                  \
+      fprintf(STK_ERR, "%s", stk_print_errors(ec));                                                                    \
       return ec;                                                                                                       \
+    }                                                                                                                  \
                                                                                                                        \
     CanaryT owl2 = *stk->owl2_; /* saving canary */                                                                    \
                                                                                                                        \
@@ -129,6 +140,7 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     if (nullptr == mem_ptr)                                                                                            \
     {                                                                                                                  \
       free(stk->owl1_);                                                                                                \
+      fprintf(STK_ERR, "%s", stk_print_errors(ec));                                                                    \
       return STK_MEMORY_ALLOCATION_ERROR;                                                                              \
     }                                                                                                                  \
                                                                                                                        \
@@ -146,13 +158,19 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
   {                                                                                                                    \
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
+    {                                                                                                                  \
+      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
       return;                                                                                                          \
+    }                                                                                                                  \
                                                                                                                        \
     if (stk->size_ == stk->capacity_)                                                                                  \
     {                                                                                                                  \
       *ec = stk_realloc_##type(stk, 2 * stk->size_ + 1);                                                               \
       if (*ec != STK_OK)                                                                                               \
+      {                                                                                                                \
+        fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                 \
         return;                                                                                                        \
+      }                                                                                                                \
     }                                                                                                                  \
                                                                                                                        \
     assert((stk->data_ != nullptr) && "data array is nullptr");                                                        \
@@ -164,11 +182,15 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
   {                                                                                                                    \
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
+    {                                                                                                                  \
+      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
       return {};                                                                                                       \
+    }                                                                                                                  \
                                                                                                                        \
     if (stk->size_ == 0)                                                                                               \
     {                                                                                                                  \
       *ec = STK_EMPTY;                                                                                                 \
+      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -177,11 +199,15 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     {                                                                                                                  \
       *ec = stk_realloc_##type(stk, third_cap);                                                                        \
       if (*ec != STK_OK)                                                                                               \
+      {                                                                                                                \
+        fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                 \
         return {};                                                                                                     \
+      }                                                                                                                \
                                                                                                                        \
       if (nullptr == stk->data_)                                                                                       \
       {                                                                                                                \
         *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                             \
+        fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                 \
         return {};                                                                                                     \
       }                                                                                                                \
     }                                                                                                                  \
@@ -195,11 +221,15 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
   {                                                                                                                    \
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
+    {                                                                                                                  \
+      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
       return {};                                                                                                       \
+    }                                                                                                                  \
                                                                                                                        \
     if (stk->size_ == 0)                                                                                               \
     {                                                                                                                  \
       *ec = STK_EMPTY;                                                                                                 \
+      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -209,44 +239,43 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
   void stk_dump_##type(const stk_##type *stk, FILE *fstream)                                                           \
   {                                                                                                                    \
     fprintf(fstream, "\n=========================== Dump of %s stack ===========================\n", #type);           \
-    fputs("\n", fstream);                                                                                                \
-    fputs("At first let's ask our stack feeling himself\n\n", fstream);                                                    \
-    fprintf(fstream, "Error status: ");                                                                                \
+    fputs("\n", fstream);                                                                                              \
+    fputs("At first let's ask our stack feeling himself\n\n", fstream);                                                \
     StkErrCode ec = stk_is_valid_##type(stk);                                                                          \
-    stk_print_errors(ec);                                                                                              \
+    fprintf(fstream, "Error status: %s", stk_print_errors(ec));                                                        \
     if (ec != STK_OK)                                                                                                  \
     {                                                                                                                  \
-      fputs("Stack is not OK...\n", fstream);                                                                            \
-      fputs("============================================================================\n\n", fstream);                \
+      fputs("Stack is not OK...\n", fstream);                                                                          \
+      fputs("============================================================================\n\n", fstream);              \
     }                                                                                                                  \
-    fputs("\n", fstream);                                                                                                \
+    fputs("\n", fstream);                                                                                              \
     fprintf(fstream, "Your stack contains %zu elements and may fit %zu at the moment.\n", stk->size_, stk->capacity_); \
-    fputs("\n", fstream);                                                                                                \
-    fputs("Let's talk about birds!\n", fstream);                                                                         \
+    fputs("\n", fstream);                                                                                              \
+    fputs("Let's talk about birds!\n", fstream);                                                                       \
     fprintf(fstream, "It's struct canaries values: 0x%lX for first and 0x%lX for second.\n", stk->can1_, stk->can2_);  \
     fprintf(fstream, "It's   data canaries values: 0x%lX for first and 0x%lX for second.\n", *stk->owl1_,              \
             *stk->owl2_);                                                                                              \
-    fputs("\n", fstream);                                                                                                \
-    fputs("What canaries should be...\n", fstream);                                                                      \
+    fputs("\n", fstream);                                                                                              \
+    fputs("What canaries should be...\n", fstream);                                                                    \
     fprintf(fstream, "Struct canaries should be:   0x%lX for first and 0x%lX for second.\n", stk_can1_val,             \
             stk_can2_val);                                                                                             \
     fprintf(fstream, "Data canaries should be:     0x%lX for first and 0x%lX for second.\n", stk_owl1_val,             \
             stk_owl2_val);                                                                                             \
-    fputs("\n", fstream);                                                                                                \
-    fputs("We need to discuss hash too.\n", fstream);                                                                    \
+    fputs("\n", fstream);                                                                                              \
+    fputs("We need to discuss hash too.\n", fstream);                                                                  \
     fprintf(fstream, "Struct hash: 0x%lX\n", stk->struct_hash_);                                                       \
     fprintf(fstream, "Data   hash: 0x%lX\n", stk->data_hash_);                                                         \
     fprintf(fstream, "Func   hash: 0x%lX\n", stk->func_hash_);                                                         \
-    fputs("\n", fstream);                                                                                                \
-    fputs("Stack data. Finally.\n", fstream);                                                                            \
+    fputs("\n", fstream);                                                                                              \
+    fputs("Stack data. Finally.\n", fstream);                                                                          \
     for (size_t i = 0; i < stk->size_; ++i)                                                                            \
     {                                                                                                                  \
       fprintf(fstream, "data[%ld]: ", i);                                                                              \
       stk_print_elem_##type(stk->data_ + i);                                                                           \
-      fputs("\n", fstream);                                                                                              \
+      fputs("\n", fstream);                                                                                            \
     }                                                                                                                  \
-    fputs("\n", fstream);                                                                                                \
-    fputs("============================================================================\n\n", fstream);                  \
+    fputs("\n", fstream);                                                                                              \
+    fputs("============================================================================\n\n", fstream);                \
   }                                                                                                                    \
                                                                                                                        \
   stk_##type *stk_destroy_##type(stk_##type *stk)                                                                      \
@@ -275,6 +304,7 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
   {                                                                                                                    \
     if (nullptr == stk)                                                                                                \
     {                                                                                                                  \
+      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
       *ec = STK_IS_NULLPTR;                                                                                            \
       return;                                                                                                          \
     }                                                                                                                  \
@@ -289,6 +319,7 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     if (stk->owl1_ == nullptr)                                                                                         \
     {                                                                                                                  \
       *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                               \
+      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
       return;                                                                                                          \
     }                                                                                                                  \
                                                                                                                        \
@@ -311,6 +342,7 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     if (nullptr == res)                                                                                                \
     {                                                                                                                  \
       *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                               \
+      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
       return nullptr;                                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
