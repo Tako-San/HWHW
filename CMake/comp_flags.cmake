@@ -20,6 +20,7 @@ set(DED_SAN
 -fsanitize=unreachable
 -fsanitize=vla-bound
 -fsanitize=vptr
+-fsized-deallocation
 )
 
 string(REPLACE " " ";" DED_SAN_LST "${DED_SAN}")
@@ -76,7 +77,6 @@ set(DED_GCC_WARNS
 -Wno-old-style-cast
 -Wno-varargs
 -fcheck-new
--fsized-deallocation
 -fstack-protector
 -fstrict-overflow
 -flto-odr-type-merging

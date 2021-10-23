@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 project(StackProject)
 
 # cool compiler flags
-include(cmake/warns.cmake)
+include(../CMake/comp_flags.cmake)
 
 # here lies STK lib
 add_subdirectory(lib)
