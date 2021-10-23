@@ -32,12 +32,13 @@ int test()
 
   printf("Stack(int) size equals to %zu\n", stk_size(&testStack, &err_code));
 
+  stk_dump(&testStack);
   while (!stk_is_empty(&testStack, &err_code))
     printf("%d\n", stk_pop(&testStack, &err_code));
 
   printf("Stack(int) size equals to %zu\n", stk_size(&testStack, &err_code));
-  stk_destroy(&testStack);
 
+  stk_destroy(&testStack);
   puts("");
 
   Stack(double) *dStack = stk_new(double, &err_code);

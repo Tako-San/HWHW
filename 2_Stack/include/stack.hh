@@ -204,7 +204,7 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
                                                                                                                        \
   void stk_dump_##type(const stk_##type *stk)                                                                          \
   {                                                                                                                    \
-    printf("\n============================Dump of %s stack============================\n", #type);                     \
+    printf("\n=========================== Dump of %s stack ===========================\n", #type);                     \
     puts("");                                                                                                          \
     puts("At first let's ask our stack feeling himself");                                                              \
     printf("Error code: ");                                                                                            \
@@ -248,7 +248,8 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     stk->data_ = nullptr;                                                                                              \
     stk->size_ = 0;                                                                                                    \
     stk->capacity_ = 0;                                                                                                \
-    stk_hash_recalc_##type(stk);                                                                                       \
+    stk->data_hash_ = 0;                                                                                       \
+    stk->struct_hash_ = 0;                                                                                       \
     return stk;                                                                                                        \
   }                                                                                                                    \
                                                                                                                        \
@@ -278,12 +279,14 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     }                                                                                                                  \
                                                                                                                        \
     stk->owl2_ = stk->owl1_ + 1;                                                                                       \
+    stk->data_ = (type *)stk->owl2_;                                                                                   \
                                                                                                                        \
     *(stk->owl1_) = stk_owl1_val;                                                                                      \
     *(stk->owl2_) = stk_owl2_val;                                                                                      \
                                                                                                                        \
     stk->functions_ = &stk_funcs_##type;                                                                               \
                                                                                                                        \
+    puts("hi1");                                                                                                       \
     stk->data_hash_ = stk_hash_calc(stk->data_, stk->data_ + stk->size_);                                              \
     stk->func_hash_ = stk_hash_calc(stk->functions_, stk->functions_ + sizeof(stk_functions_##type));                  \
     stk->struct_hash_ = stk_hash_calc(&(stk->size_), &(stk->struct_hash_));                                            \

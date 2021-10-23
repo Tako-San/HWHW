@@ -14,6 +14,9 @@ bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2)
 
 HashT stk_hash_calc(const void *from_void, const void *to_void)
 {
+  assert(from_void != nullptr);
+  assert(to_void != nullptr);
+
   const uint8_t *from = (const uint8_t *)from_void;
   const uint8_t *to = (const uint8_t *)to_void;
 
@@ -26,6 +29,9 @@ HashT stk_hash_calc(const void *from_void, const void *to_void)
 
 bool stk_check_hash(HashT hash, const void *from, const void *to)
 {
+  assert(from != nullptr);
+  assert(to != nullptr);
+
 #ifdef STK_RELEASE_MODE
   return true;
 #else
