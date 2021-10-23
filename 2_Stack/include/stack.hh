@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 typedef uint64_t HashT;
@@ -27,7 +28,7 @@ bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2);
 bool stk_check_hash(HashT hash, const void *from, const void *to);
 HashT stk_hash_calc(const void *from_void, const void *to_void);
 
-void stk_print_errors(StkErrCode ec);
+const char *stk_print_errors(StkErrCode ec, FILE *fstream = stdout);
 
 const CanaryT stk_can1_val = 0xACABBACA;
 const CanaryT stk_can2_val = 0xDEADBEEF;
@@ -48,7 +49,7 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     void (*push)(stk_##type *, type, StkErrCode *);                                                                    \
     type (*top)(const stk_##type *, StkErrCode *);                                                                     \
     type (*pop)(stk_##type *, StkErrCode *);                                                                           \
-    void (*dump)(const stk_##type *);                                                                                  \
+    void (*dump)(const stk_##type *, FILE *);                                                                          \
                                                                                                                        \
     stk_##type *(*destroy)(stk_##type *);                                                                              \
   };                                                                                                                   \
@@ -64,7 +65,7 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     type *data_;                                                                                                       \
     CanaryT *owl2_;                                                                                                    \
                                                                                                                        \
-    stk_functions_##type *functions_;                                                                                  \
+    const stk_functions_##type *functions_;                                                                            \
                                                                                                                        \
     HashT data_hash_;                                                                                                  \
     HashT func_hash_;                                                                                                  \
@@ -205,44 +206,47 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     return stk->data_[stk->size_ - 1];                                                                                 \
   }                                                                                                                    \
                                                                                                                        \
-  void stk_dump_##type(const stk_##type *stk)                                                                          \
+  void stk_dump_##type(const stk_##type *stk, FILE *fstream)                                                           \
   {                                                                                                                    \
-    printf("\n=========================== Dump of %s stack ===========================\n", #type);                     \
-    puts("");                                                                                                          \
-    puts("At first let's ask our stack feeling himself");                                                              \
-    printf("Error code: ");                                                                                            \
+    fprintf(fstream, "\n=========================== Dump of %s stack ===========================\n", #type);           \
+    fputs("\n", fstream);                                                                                                \
+    fputs("At first let's ask our stack feeling himself\n\n", fstream);                                                    \
+    fprintf(fstream, "Error status: ");                                                                                \
     StkErrCode ec = stk_is_valid_##type(stk);                                                                          \
     stk_print_errors(ec);                                                                                              \
     if (ec != STK_OK)                                                                                                  \
     {                                                                                                                  \
-      puts("Stack is not OK...");                                                                                      \
-      puts("============================================================================\n");                          \
+      fputs("Stack is not OK...\n", fstream);                                                                            \
+      fputs("============================================================================\n\n", fstream);                \
     }                                                                                                                  \
-    puts("");                                                                                                          \
-    printf("Your stack contains %zu elements and may fit %zu at the moment.\n", stk->size_, stk->capacity_);           \
-    puts("");                                                                                                          \
-    puts("Let's talk about birds!");                                                                                   \
-    printf("It's struct canaries values: 0x%lX for first and 0x%lX for second.\n", stk->can1_, stk->can2_);            \
-    printf("It's   data canaries values: 0x%lX for first and 0x%lX for second.\n", *stk->owl1_, *stk->owl2_);          \
-    puts("");                                                                                                          \
-    puts("What canaries should be...");                                                                                \
-    printf("Struct canaries should be:   0x%lX for first and 0x%lX for second.\n", stk_can1_val, stk_can2_val);        \
-    printf("Data canaries should be:     0x%lX for first and 0x%lX for second.\n", stk_owl1_val, stk_owl2_val);        \
-    puts("");                                                                                                          \
-    puts("We need to discuss hash too.");                                                                              \
-    printf("Struct hash: 0x%lX\n", stk->struct_hash_);                                                                 \
-    printf("Data   hash: 0x%lX\n", stk->data_hash_);                                                                   \
-    printf("Func   hash: 0x%lX\n", stk->func_hash_);                                                                   \
-    puts("");                                                                                                          \
-    puts("Stack data. Finally.");                                                                                      \
+    fputs("\n", fstream);                                                                                                \
+    fprintf(fstream, "Your stack contains %zu elements and may fit %zu at the moment.\n", stk->size_, stk->capacity_); \
+    fputs("\n", fstream);                                                                                                \
+    fputs("Let's talk about birds!\n", fstream);                                                                         \
+    fprintf(fstream, "It's struct canaries values: 0x%lX for first and 0x%lX for second.\n", stk->can1_, stk->can2_);  \
+    fprintf(fstream, "It's   data canaries values: 0x%lX for first and 0x%lX for second.\n", *stk->owl1_,              \
+            *stk->owl2_);                                                                                              \
+    fputs("\n", fstream);                                                                                                \
+    fputs("What canaries should be...\n", fstream);                                                                      \
+    fprintf(fstream, "Struct canaries should be:   0x%lX for first and 0x%lX for second.\n", stk_can1_val,             \
+            stk_can2_val);                                                                                             \
+    fprintf(fstream, "Data canaries should be:     0x%lX for first and 0x%lX for second.\n", stk_owl1_val,             \
+            stk_owl2_val);                                                                                             \
+    fputs("\n", fstream);                                                                                                \
+    fputs("We need to discuss hash too.\n", fstream);                                                                    \
+    fprintf(fstream, "Struct hash: 0x%lX\n", stk->struct_hash_);                                                       \
+    fprintf(fstream, "Data   hash: 0x%lX\n", stk->data_hash_);                                                         \
+    fprintf(fstream, "Func   hash: 0x%lX\n", stk->func_hash_);                                                         \
+    fputs("\n", fstream);                                                                                                \
+    fputs("Stack data. Finally.\n", fstream);                                                                            \
     for (size_t i = 0; i < stk->size_; ++i)                                                                            \
     {                                                                                                                  \
-      printf("data[%ld]: ", i);                                                                                        \
+      fprintf(fstream, "data[%ld]: ", i);                                                                              \
       stk_print_elem_##type(stk->data_ + i);                                                                           \
-      puts("");                                                                                                        \
+      fputs("\n", fstream);                                                                                              \
     }                                                                                                                  \
-    puts("");                                                                                                          \
-    puts("============================================================================\n");                            \
+    fputs("\n", fstream);                                                                                                \
+    fputs("============================================================================\n\n", fstream);                  \
   }                                                                                                                    \
                                                                                                                        \
   stk_##type *stk_destroy_##type(stk_##type *stk)                                                                      \
@@ -322,7 +326,7 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
 
 #define stk_is_empty(stack, err_code) (stack)->functions_->is_empty(stack, err_code)
 #define stk_size(stack, err_code) (stack)->functions_->size(stack, err_code)
-#define stk_dump(stack) (stack)->functions_->dump(stack)
+#define stk_dump(stack, fstream) (stack)->functions_->dump(stack, fstream)
 
 #define stk_push(stack, elem, err_code) (stack)->functions_->push(stack, elem, err_code)
 #define stk_pop(stack, err_code) (stack)->functions_->pop(stack, err_code)

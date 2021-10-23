@@ -39,39 +39,40 @@ bool stk_check_hash(HashT hash, const void *from, const void *to)
 #endif
 }
 
-void stk_print_errors(StkErrCode ec)
+const char * stk_print_errors(StkErrCode ec, FILE *fstream)
 {
   switch (ec)
   {
   case STK_OK:
-    puts("STK_OK");
+    fputs("stack is OK", fstream);
     break;
   case STK_IS_NULLPTR:
-    puts("STK_IS_NULLPTR");
+    fputs("pointer to stack is nullptr", fstream);
     break;
   case STK_MEMORY_ALLOCATION_ERROR:
-    puts("STK_MEMORY_ALLOCATION_ERROR");
+    fputs("memory allocation error occurred", fstream);
     break;
   case STK_UNKNOWN_ERROR:
-    puts("STK_UNKNOWN_ERROR");
+    fputs("unknown error occurred", fstream);
     break;
   case STK_CANARIES_DAMAGED:
-    puts("STK_CANARIES_DAMAGED");
+    fputs("struct canaries has wrong value", fstream);
     break;
   case STK_OWLS_DAMAGED:
-    puts("STK_OWLS_DAMAGED");
+    fputs("data canaries has wrong value", fstream);
     break;
   case STK_STRUCT_HASH_DAMAGED:
-    puts("STK_STRUCT_HASH_DAMAGED");
+    fputs("struct hash is not equal to calculated", fstream);
     break;
   case STK_DATA_HASH_DAMAGED:
-    puts("STK_DATA_HASH_DAMAGED");
+    fputs("data hash is not equal to calculated", fstream);
     break;
   case STK_FUNC_HASH_DAMAGED:
-    puts("STK_FUNC_HASH_DAMAGED");
+    fputs("hash of the function struct is not equal to calculated", fstream);
     break;
   case STK_EMPTY:
-    puts("STK_EMPTY");
+    fputs("pop or top from empty stack happened", fstream);
     break;
   }
+  return "hello";
 }

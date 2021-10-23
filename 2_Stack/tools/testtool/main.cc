@@ -32,7 +32,7 @@ int test()
 
   printf("Stack(int) size equals to %zu\n", stk_size(&testStack, &err_code));
 
-  stk_dump(&testStack);
+  stk_dump(&testStack, stdout);
   while (!stk_is_empty(&testStack, &err_code))
     printf("%d\n", stk_pop(&testStack, &err_code));
 
@@ -47,7 +47,7 @@ int test()
   stk_push(dStack, 9.12, &err_code);
   stk_push(dStack, 32.51, &err_code);
 
-  stk_dump(dStack);
+  stk_dump(dStack, stdout);
 
   while (!stk_is_empty(dStack, &err_code))
     stk_pop(dStack, &err_code);
@@ -56,7 +56,7 @@ int test()
 
   dStack = stk_new(double, &err_code);
   stk_push(dStack, 1, &err_code);
-  stk_dump(dStack);
+  stk_dump(dStack, stdout);
   printf("pop1: %lf\n", stk_pop(dStack, &err_code));
   printf("pop2: %lf\n", stk_pop(dStack, &err_code));
   stk_print_errors(err_code);
