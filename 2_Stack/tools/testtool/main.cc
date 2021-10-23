@@ -3,13 +3,13 @@
 #include "stack.hh"
 
 define_stack(int);
-define_stack(double);
-
-void stk_print_elem_int(const int *elem_ptr)
+void stk_print_elem(int)(const int *elem_ptr)
 {
   printf("%d", *elem_ptr);
 }
-void stk_print_elem_double(const double *elem_ptr)
+
+define_stack(double);
+void stk_print_elem(double)(const double *elem_ptr)
 {
   printf("%lf", *elem_ptr);
 }
@@ -46,10 +46,10 @@ int test()
   stk_push(dStack, 9.12, &err_code);
   stk_push(dStack, 32.51, &err_code);
 
-  while (!stk_is_empty(dStack, &err_code))
-    printf("%5.2f ", stk_pop(dStack, &err_code));
+  stk_dump(dStack);
 
-  puts("");
+  while (!stk_is_empty(dStack, &err_code))
+    stk_pop(dStack, &err_code);
 
   free(stk_destroy(dStack));
 
@@ -58,6 +58,7 @@ int test()
   stk_dump(dStack);
   printf("pop1: %lf\n", stk_pop(dStack, &err_code));
   printf("pop2: %lf\n", stk_pop(dStack, &err_code));
+  stk_print_errors(err_code);
   free(stk_destroy(dStack));
 
   return 0;
