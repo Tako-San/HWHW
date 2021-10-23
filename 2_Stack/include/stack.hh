@@ -245,10 +245,17 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
   stk_##type *stk_destroy_##type(stk_##type *stk)                                                                      \
   {                                                                                                                    \
     free(stk->owl1_);                                                                                                  \
+                                                                                                                       \
     stk->data_ = nullptr;                                                                                              \
+    stk->owl1_ = nullptr;                                                                                              \
+    stk->owl2_ = nullptr;                                                                                              \
+    stk->functions_ = nullptr;                                                                                         \
+                                                                                                                       \
     stk->size_ = 0;                                                                                                    \
     stk->capacity_ = 0;                                                                                                \
+                                                                                                                       \
     stk->data_hash_ = 0;                                                                                               \
+    stk->func_hash_ = 0;                                                                                               \
     stk->struct_hash_ = 0;                                                                                             \
     return stk;                                                                                                        \
   }                                                                                                                    \
