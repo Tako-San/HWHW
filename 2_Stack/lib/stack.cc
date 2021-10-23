@@ -35,11 +35,7 @@ bool stk_check_hash(HashT hash, const void *from, const void *to)
 #ifdef STK_RELEASE_MODE
   return true;
 #else
-  bool res = (hash == stk_hash_calc(from, to));
-  if (!res)
-    printf("Hashes are not equal\n");
-
-  return hash == stk_hash_calc(from, to);
+  return (hash == stk_hash_calc(from, to));
 #endif
 }
 
