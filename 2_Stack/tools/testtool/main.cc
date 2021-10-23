@@ -12,6 +12,7 @@ int main()
   return test();
 }
 
+
 int test()
 {
   Stack(int) testStack{};
@@ -46,7 +47,7 @@ int test()
 
   dStack = stk_new(double, &err_code);
   stk_push(dStack, 1, &err_code);
-  printf("pop1: %lf", stk_pop(dStack, &err_code)); 
-  printf("pop2: %lf", stk_pop(dStack, &err_code)); 
+  printf("pop1: %lf\n", stk_pop(dStack, &err_code)); 
+  printf("pop2: %lf\n", stk_pop(dStack, &err_code)); 
   return 0;
 }

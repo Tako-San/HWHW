@@ -1,23 +1,26 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
+project(StackProject)
 
-# set project name
-project(StackProject VERSION 0.1)
-
-add_executable(${PROJECT_NAME} main.cc)
-target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_BINARY_DIR}")
-
-add_subdirectory("${PROJECT_SOURCE_DIR}/Stack")
-target_link_libraries(${PROJECT_NAME} PRIVATE StackImpl)
-
-# specify standard
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_11)
-
-# include dir with Ded's warnings
+# cool compiler flags
 include(cmake/warns.cmake)
 
-# add warnings
-target_compile_options(${PROJECT_NAME} PRIVATE "$<$<CXX_COMPILER_ID:GNU>:$<$<CONFIG:Debug>:${DED_GCC_WARNS_LST}>>")
+# here lies STK lib
+add_subdirectory(lib)
 
-# add sanitizers
-target_link_options(${PROJECT_NAME} PRIVATE "$<$<CXX_COMPILER_ID:GNU>:$<$<CONFIG:Debug>:${DED_SAN_LST}>>")
-target_compile_options(${PROJECT_NAME} PRIVATE "$<$<CXX_COMPILER_ID:GNU>:$<$<CONFIG:Debug>:${DED_SAN_LST}>>")
+# link STK to every tool
+add_subdirectory(tools)
+foreach(TOOL ${TOOLLIST})
+  # add sanitizers
+  target_link_options(${TOOL} PRIVATE "$<$<CXX_COMPILER_ID:GNU>:$<$<CONFIG:Debug>:${DED_SAN_LST}>>")
+  target_compile_options(${TOOL} PRIVATE "$<$<CXX_COMPILER_ID:GNU>:$<$<CONFIG:Debug>:${DED_SAN_LST}>>")
+
+  # specify standard
+  target_compile_features(${TOOL} PRIVATE cxx_std_11)
+
+  # include directories
+  target_include_directories(${TOOL} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_include_directories(${TOOL} PRIVATE "${PROJECT_BINARY_DIR}")
+
+  # link with STK library
+  target_link_libraries(${TOOL} STK)
+endforeach()
