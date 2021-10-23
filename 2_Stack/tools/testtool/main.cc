@@ -5,13 +5,21 @@
 define_stack(int);
 define_stack(double);
 
+void stk_print_elem_int(const int *elem_ptr)
+{
+  printf("%d", *elem_ptr);
+}
+void stk_print_elem_double(const double *elem_ptr)
+{
+  printf("%lf", *elem_ptr);
+}
+
 int test();
 
 int main()
 {
   return test();
 }
-
 
 int test()
 {
@@ -47,7 +55,10 @@ int test()
 
   dStack = stk_new(double, &err_code);
   stk_push(dStack, 1, &err_code);
-  printf("pop1: %lf\n", stk_pop(dStack, &err_code)); 
-  printf("pop2: %lf\n", stk_pop(dStack, &err_code)); 
+  stk_dump(dStack);
+  printf("pop1: %lf\n", stk_pop(dStack, &err_code));
+  printf("pop2: %lf\n", stk_pop(dStack, &err_code));
+  free(stk_destroy(dStack));
+
   return 0;
 }
