@@ -248,14 +248,14 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     stk->data_ = nullptr;                                                                                              \
     stk->size_ = 0;                                                                                                    \
     stk->capacity_ = 0;                                                                                                \
-    stk->data_hash_ = 0;                                                                                       \
-    stk->struct_hash_ = 0;                                                                                       \
+    stk->data_hash_ = 0;                                                                                               \
+    stk->struct_hash_ = 0;                                                                                             \
     return stk;                                                                                                        \
   }                                                                                                                    \
                                                                                                                        \
-  stk_functions_##type stk_funcs_##type = {                                                                            \
-      &stk_is_empty_##type, &stk_size_##type, &stk_push_##type,   &stk_top_##type,                                     \
-      &stk_pop_##type,      &stk_dump_##type, &stk_destroy_##type};                                                    \
+  const stk_functions_##type stk_funcs_##type = {&stk_is_empty_##type, &stk_size_##type, &stk_push_##type,             \
+                                                 &stk_top_##type,      &stk_pop_##type,  &stk_dump_##type,             \
+                                                 &stk_destroy_##type};                                                 \
                                                                                                                        \
   void stk_init_##type(stk_##type *stk, StkErrCode *ec)                                                                \
   {                                                                                                                    \
@@ -286,7 +286,6 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
                                                                                                                        \
     stk->functions_ = &stk_funcs_##type;                                                                               \
                                                                                                                        \
-    puts("hi1");                                                                                                       \
     stk->data_hash_ = stk_hash_calc(stk->data_, stk->data_ + stk->size_);                                              \
     stk->func_hash_ = stk_hash_calc(stk->functions_, stk->functions_ + sizeof(stk_functions_##type));                  \
     stk->struct_hash_ = stk_hash_calc(&(stk->size_), &(stk->struct_hash_));                                            \
