@@ -126,7 +126,10 @@ const CanaryT stk_owl2_val = 0xFACAFACA;
     size_t new_size = (new_cap * sizeof(type) - 1) / sizeof(CanaryT) + 1; /* size in canaries */                       \
     CanaryT *mem_ptr = (CanaryT *)reallocarray(stk->owl1_, new_size + 2, sizeof(CanaryT));                             \
     if (nullptr == mem_ptr)                                                                                            \
+    {                                                                                                                  \
+      free(stk->owl1_);                                                                                                \
       return STK_MEMORY_ALLOCATION_ERROR;                                                                              \
+    }                                                                                                                  \
                                                                                                                        \
     stk->owl1_ = mem_ptr;                                                                                              \
     stk->owl2_ = mem_ptr + 1 + new_size;                                                                               \
