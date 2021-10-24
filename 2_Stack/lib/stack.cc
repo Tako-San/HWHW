@@ -2,7 +2,10 @@
 
 #include "stack.hh"
 
+typedef uint8_t PoisonT;
+
 FILE *STK_ERR = stderr;
+PoisonT POISON_VAL = 0xFC;
 
 bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2)
 {
@@ -68,4 +71,16 @@ const char * stk_err_descr(StkErrCode ec)
   default:
     return "really unknown error";
   }
+}
+
+void fill_w_poison(void * from_void, void * to_void)
+{
+  assert(from_void != nullptr);
+  assert(to_void != nullptr);
+
+  PoisonT *from = (PoisonT *)from_void;
+  PoisonT *to = (PoisonT *)to_void;
+
+  for (; from < to; ++from)
+    *from = POISON_VAL;
 }
