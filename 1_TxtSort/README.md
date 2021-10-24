@@ -4,7 +4,9 @@ Program for sorting text files
 
 ## Build
 
-From project dir:
+To build this project you have to install Tako's String Library and Tako's Logging Library
+from HWHW/TSL and HWHW/Trace directories.
+After that in HWHW/1_TxtSort:
 
 ```bash
 mkdir build
