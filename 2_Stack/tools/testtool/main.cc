@@ -3,15 +3,15 @@
 #include "stack.hh"
 
 define_stack(int);
-void stk_print_elem(int)(const int *elem_ptr)
+void stk_print_elem(int)(FILE *fstream, const int *elem_ptr)
 {
-  printf("%d", *elem_ptr);
+  fprintf(fstream, "%d", *elem_ptr);
 }
 
 define_stack(double);
-void stk_print_elem(double)(const double *elem_ptr)
+void stk_print_elem(double)(FILE *fstream, const double *elem_ptr)
 {
-  printf("%le", *elem_ptr);
+  fprintf(fstream, "%le", *elem_ptr);
 }
 
 int test();
@@ -30,12 +30,11 @@ int test()
   for (int i = 0; i < 35; ++i)
     stk_push(&testStack, i, &err_code);
 
-  printf("Stack(int) size equals to %zu\n", stk_size(&testStack, &err_code));
-
   stk_dump(&testStack, stdout);
   while (!stk_is_empty(&testStack, &err_code))
     printf("%d\n", stk_pop(&testStack, &err_code));
 
+  stk_dump(&testStack, stdout);
   printf("Stack(int) size equals to %zu\n", stk_size(&testStack, &err_code));
 
   stk_destroy(&testStack);

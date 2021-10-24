@@ -110,7 +110,10 @@ bool stk_check_poison(void *from_void, void *to_void)
 
   for (; from < to; ++from)
     if (*from != POISON_VAL)
+    {
+      printf("0x%x != 0x%x\n", *from, POISON_VAL);
       return false;
+    }
   return true;
 
 #endif
