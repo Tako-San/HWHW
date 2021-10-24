@@ -41,7 +41,7 @@ bool stk_check_hash(HashT hash, const void *from, const void *to)
 #endif
 }
 
-const char * stk_print_errors(StkErrCode ec)
+const char * stk_err_descr(StkErrCode ec)
 {
   switch (ec)
   {
@@ -65,6 +65,7 @@ const char * stk_print_errors(StkErrCode ec)
     return "hash of the function struct is not equal to calculated";
   case STK_EMPTY:
     return "pop or top from empty stack happened";
+  default:
+    return "really unknown error";
   }
-  return "really unknown error";
 }
