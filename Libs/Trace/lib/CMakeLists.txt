@@ -7,12 +7,10 @@ set_target_properties(TLL PROPERTIES PUBLIC_HEADER "${CMAKE_SOURCE_DIR}/include/
 
 target_include_directories(TLL PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include> 
-    $<INSTALL_INTERFACE:include/TLL>
+    $<INSTALL_INTERFACE:include>
 )
 
-install(TARGETS TLL EXPORT TLLTargets
-  PUBLIC_HEADER DESTINATION include/TLL
-)
+install(TARGETS TLL EXPORT TLLTargets)
 
 install(EXPORT TLLTargets
   FILE TLLTargets.cmake
