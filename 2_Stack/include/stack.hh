@@ -45,7 +45,7 @@ extern FILE *STK_ERR;
 #define define_stack(type)                                                                                             \
                                                                                                                        \
   struct stk_##type;                                                                                                   \
-  void stk_print_elem_##type(const type *elem_ptr);                                                                    \
+  void stk_print_elem_##type(FILE *fstream, const type *elem_ptr);                                                     \
                                                                                                                        \
   struct stk_functions_##type                                                                                          \
   {                                                                                                                    \
@@ -111,7 +111,9 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
+      fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                        \
+      fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                                \
+      fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                             \
       return true;                                                                                                     \
     }                                                                                                                  \
                                                                                                                        \
@@ -123,7 +125,9 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
+      fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                        \
+      fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                                \
+      fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                             \
       return 0;                                                                                                        \
     }                                                                                                                  \
                                                                                                                        \
@@ -170,7 +174,9 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
+      fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                        \
+      fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                                \
+      fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                             \
       return;                                                                                                          \
     }                                                                                                                  \
                                                                                                                        \
@@ -179,7 +185,9 @@ extern FILE *STK_ERR;
       *ec = stk_realloc_##type(stk, 2 * stk->size_ + 1);                                                               \
       if (*ec != STK_OK)                                                                                               \
       {                                                                                                                \
-        fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                  \
+        fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                      \
+        fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                              \
+        fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                           \
         return;                                                                                                        \
       }                                                                                                                \
     }                                                                                                                  \
@@ -194,14 +202,18 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
+      fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                        \
+      fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                                \
+      fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                             \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
     if (stk->size_ == 0)                                                                                               \
     {                                                                                                                  \
       *ec = STK_EMPTY;                                                                                                 \
-      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
+      fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                        \
+      fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                                \
+      fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                             \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -211,21 +223,26 @@ extern FILE *STK_ERR;
       *ec = stk_realloc_##type(stk, third_cap);                                                                        \
       if (*ec != STK_OK)                                                                                               \
       {                                                                                                                \
-        fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                  \
+        fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                      \
+        fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                              \
+        fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                           \
         return {};                                                                                                     \
       }                                                                                                                \
                                                                                                                        \
       if (nullptr == stk->data_)                                                                                       \
       {                                                                                                                \
         *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                             \
-        fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                  \
+        fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                      \
+        fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                              \
+        fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                           \
         return {};                                                                                                     \
       }                                                                                                                \
     }                                                                                                                  \
                                                                                                                        \
-    stk->size_ -= 1;                                                                                                   \
+    type pop_res = stk->data_[--stk->size_];                                                                           \
+    stk_fill_w_poison(stk->data_ + stk->size_, stk->data_ + stk->size_ + 1);                                           \
     stk_hash_recalc_##type(stk);                                                                                       \
-    return stk->data_[stk->size_];                                                                                     \
+    return pop_res;                                                                                                    \
   }                                                                                                                    \
                                                                                                                        \
   type stk_top_##type(const stk_##type *stk, StkErrCode *ec)                                                           \
@@ -233,14 +250,18 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
+      fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                        \
+      fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                                \
+      fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                             \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
     if (stk->size_ == 0)                                                                                               \
     {                                                                                                                  \
       *ec = STK_EMPTY;                                                                                                 \
-      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
+      fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                        \
+      fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                                \
+      fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                             \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -283,7 +304,7 @@ extern FILE *STK_ERR;
     for (size_t i = 0; i < stk->size_; ++i)                                                                            \
     {                                                                                                                  \
       fprintf(fstream, "data[%ld]: ", i);                                                                              \
-      stk_print_elem_##type(stk->data_ + i);                                                                           \
+      stk_print_elem_##type(fstream, stk->data_ + i);                                                                  \
       fputs("\n", fstream);                                                                                            \
     }                                                                                                                  \
     fputs("\n", fstream);                                                                                              \
@@ -291,7 +312,7 @@ extern FILE *STK_ERR;
     for (size_t i = stk->size_; i < stk->capacity_; ++i)                                                               \
     {                                                                                                                  \
       fprintf(fstream, "data[%ld]: ", i);                                                                              \
-      stk_print_elem_##type(stk->data_ + i);                                                                           \
+      stk_print_elem_##type(fstream, stk->data_ + i);                                                                  \
       fputs("\n", fstream);                                                                                            \
     }                                                                                                                  \
     fputs("\n", fstream);                                                                                              \
@@ -324,7 +345,9 @@ extern FILE *STK_ERR;
   {                                                                                                                    \
     if (nullptr == stk)                                                                                                \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
+      fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                        \
+      fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                                \
+      fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                             \
       *ec = STK_IS_NULLPTR;                                                                                            \
       return;                                                                                                          \
     }                                                                                                                  \
@@ -339,7 +362,9 @@ extern FILE *STK_ERR;
     if (stk->owl1_ == nullptr)                                                                                         \
     {                                                                                                                  \
       *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                               \
-      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
+      fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                        \
+      fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                                \
+      fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                             \
       return;                                                                                                          \
     }                                                                                                                  \
                                                                                                                        \
@@ -362,7 +387,9 @@ extern FILE *STK_ERR;
     if (nullptr == res)                                                                                                \
     {                                                                                                                  \
       *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                               \
-      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
+      fprintf(STK_ERR, "FILE: %s\n", __FILE__);                                                                        \
+      fprintf(STK_ERR, "FUNCTION: %s\n", __FUNCTION__);                                                                \
+      fprintf(STK_ERR, "ERROR: %s\n", stk_err_descr(*ec));                                                             \
       return nullptr;                                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
