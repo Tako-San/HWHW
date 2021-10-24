@@ -59,7 +59,7 @@ int test()
   stk_dump(dStack, stdout);
   printf("pop1: %lf\n", stk_pop(dStack, &err_code));
   printf("pop2: %lf\n", stk_pop(dStack, &err_code));
-  stk_print_errors(err_code);
+  stk_err_descr(err_code);
   free(stk_destroy(dStack));
 
   return 0;

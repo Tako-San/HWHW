@@ -28,7 +28,8 @@ bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2);
 bool stk_check_hash(HashT hash, const void *from, const void *to);
 HashT stk_hash_calc(const void *from_void, const void *to_void);
 
-const char *stk_print_errors(StkErrCode ec);
+void fill_w_poison(void * from_void, void * to_void);
+const char *stk_err_descr(StkErrCode ec);
 
 const CanaryT stk_can1_val = 0xACABBACA;
 const CanaryT stk_can2_val = 0xDEADBEEF;
@@ -105,7 +106,7 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
       return true;                                                                                                     \
     }                                                                                                                  \
                                                                                                                        \
@@ -117,7 +118,7 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
       return 0;                                                                                                        \
     }                                                                                                                  \
                                                                                                                        \
@@ -129,7 +130,7 @@ extern FILE *STK_ERR;
     StkErrCode ec = stk_is_valid_##type(stk);                                                                          \
     if (ec != STK_OK)                                                                                                  \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_print_errors(ec));                                                                    \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(ec));                                                                     \
       return ec;                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -140,7 +141,10 @@ extern FILE *STK_ERR;
     if (nullptr == mem_ptr)                                                                                            \
     {                                                                                                                  \
       free(stk->owl1_);                                                                                                \
-      fprintf(STK_ERR, "%s", stk_print_errors(ec));                                                                    \
+      stk->owl1_ = nullptr;                                                                                            \
+      stk->owl2_ = nullptr;                                                                                            \
+      stk->data_ = nullptr;                                                                                            \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(ec));                                                                     \
       return STK_MEMORY_ALLOCATION_ERROR;                                                                              \
     }                                                                                                                  \
                                                                                                                        \
@@ -150,6 +154,8 @@ extern FILE *STK_ERR;
                                                                                                                        \
     stk->capacity_ = new_size * sizeof(CanaryT) / sizeof(type);                                                        \
     stk->data_ = (type *)(mem_ptr + 1);                                                                                \
+                                                                                                                       \
+    fill_w_poison(stk->data_ + stk->size_, stk->data_ + stk->capacity_);                                               \
     stk_hash_recalc_##type(stk);                                                                                       \
     return STK_OK;                                                                                                     \
   }                                                                                                                    \
@@ -159,7 +165,7 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
       return;                                                                                                          \
     }                                                                                                                  \
                                                                                                                        \
@@ -168,7 +174,7 @@ extern FILE *STK_ERR;
       *ec = stk_realloc_##type(stk, 2 * stk->size_ + 1);                                                               \
       if (*ec != STK_OK)                                                                                               \
       {                                                                                                                \
-        fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                 \
+        fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                  \
         return;                                                                                                        \
       }                                                                                                                \
     }                                                                                                                  \
@@ -183,14 +189,14 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
     if (stk->size_ == 0)                                                                                               \
     {                                                                                                                  \
       *ec = STK_EMPTY;                                                                                                 \
-      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -200,14 +206,14 @@ extern FILE *STK_ERR;
       *ec = stk_realloc_##type(stk, third_cap);                                                                        \
       if (*ec != STK_OK)                                                                                               \
       {                                                                                                                \
-        fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                 \
+        fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                  \
         return {};                                                                                                     \
       }                                                                                                                \
                                                                                                                        \
       if (nullptr == stk->data_)                                                                                       \
       {                                                                                                                \
         *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                             \
-        fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                 \
+        fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                  \
         return {};                                                                                                     \
       }                                                                                                                \
     }                                                                                                                  \
@@ -222,14 +228,14 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
     if (stk->size_ == 0)                                                                                               \
     {                                                                                                                  \
       *ec = STK_EMPTY;                                                                                                 \
-      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -242,11 +248,12 @@ extern FILE *STK_ERR;
     fputs("\n", fstream);                                                                                              \
     fputs("At first let's ask our stack feeling himself\n\n", fstream);                                                \
     StkErrCode ec = stk_is_valid_##type(stk);                                                                          \
-    fprintf(fstream, "Error status: %s", stk_print_errors(ec));                                                        \
-    if (ec != STK_OK)                                                                                                  \
+    fprintf(fstream, "Error status: %s", stk_err_descr(ec));                                                           \
+    if (ec == STK_IS_NULLPTR)                                                                                          \
     {                                                                                                                  \
-      fputs("Stack is not OK...\n", fstream);                                                                          \
+      fputs("Stack is nullptr...\n", fstream);                                                                         \
       fputs("============================================================================\n\n", fstream);              \
+      return;                                                                                                          \
     }                                                                                                                  \
     fputs("\n", fstream);                                                                                              \
     fprintf(fstream, "Your stack contains %zu elements and may fit %zu at the moment.\n", stk->size_, stk->capacity_); \
@@ -256,7 +263,7 @@ extern FILE *STK_ERR;
     fprintf(fstream, "It's   data canaries values: 0x%lX for first and 0x%lX for second.\n", *stk->owl1_,              \
             *stk->owl2_);                                                                                              \
     fputs("\n", fstream);                                                                                              \
-    fputs("What canaries should be...\n", fstream);                                                                    \
+    fputs("What canaries should be?\n", fstream);                                                                      \
     fprintf(fstream, "Struct canaries should be:   0x%lX for first and 0x%lX for second.\n", stk_can1_val,             \
             stk_can2_val);                                                                                             \
     fprintf(fstream, "Data canaries should be:     0x%lX for first and 0x%lX for second.\n", stk_owl1_val,             \
@@ -304,7 +311,7 @@ extern FILE *STK_ERR;
   {                                                                                                                    \
     if (nullptr == stk)                                                                                                \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
       *ec = STK_IS_NULLPTR;                                                                                            \
       return;                                                                                                          \
     }                                                                                                                  \
@@ -319,7 +326,7 @@ extern FILE *STK_ERR;
     if (stk->owl1_ == nullptr)                                                                                         \
     {                                                                                                                  \
       *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                               \
-      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
       return;                                                                                                          \
     }                                                                                                                  \
                                                                                                                        \
@@ -342,7 +349,7 @@ extern FILE *STK_ERR;
     if (nullptr == res)                                                                                                \
     {                                                                                                                  \
       *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                               \
-      fprintf(STK_ERR, "%s", stk_print_errors(*ec));                                                                   \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
       return nullptr;                                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
