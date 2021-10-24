@@ -22,12 +22,10 @@ set_target_properties(TSL PROPERTIES PUBLIC_HEADER "${CMAKE_SOURCE_DIR}/tsl.hh")
 
 target_include_directories(TSL PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include/TSL>
+    $<INSTALL_INTERFACE:include>
 )
 
-install(TARGETS TSL CB EXPORT TSLTargets
-  PUBLIC_HEADER DESTINATION include/TSL
-)
+install(TARGETS TSL CB EXPORT TSLTargets)
 
 install(EXPORT TSLTargets
   FILE TSLTargets.cmake

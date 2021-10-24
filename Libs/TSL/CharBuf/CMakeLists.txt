@@ -5,5 +5,5 @@ set_target_properties(CB PROPERTIES PUBLIC_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/C
 
 target_include_directories(CB INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include/TSL>
+    $<INSTALL_INTERFACE:include>
 )
