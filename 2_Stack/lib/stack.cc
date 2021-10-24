@@ -10,10 +10,13 @@ PoisonT POISON_VAL = 0xFC;
 bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2)
 {
 #ifdef STK_RELEASE_MODE
+
   return true;
+
 #else
-  // puts(__func__);
+
   return (can1 == stk_can1_val) && (can2 == stk_can2_val) && (owl1 == stk_owl1_val) && (owl2 == stk_owl2_val);
+
 #endif
 }
 
@@ -34,17 +37,21 @@ HashT stk_hash_calc(const void *from_void, const void *to_void)
 
 bool stk_check_hash(HashT hash, const void *from, const void *to)
 {
+#ifdef STK_RELEASE_MODE
+
+  return true;
+
+#else
+
   assert(from != nullptr);
   assert(to != nullptr);
 
-#ifdef STK_RELEASE_MODE
-  return true;
-#else
   return (hash == stk_hash_calc(from, to));
+
 #endif
 }
 
-const char * stk_err_descr(StkErrCode ec)
+const char *stk_err_descr(StkErrCode ec)
 {
   switch (ec)
   {
@@ -68,12 +75,14 @@ const char * stk_err_descr(StkErrCode ec)
     return "hash of the function struct is not equal to calculated";
   case STK_EMPTY:
     return "pop or top from empty stack happened";
+  case STK_POISON_CHANGED:
+    return "poison values in unused part of stack changed";
   default:
     return "really unknown error";
   }
 }
 
-void fill_w_poison(void * from_void, void * to_void)
+void stk_fill_w_poison(void *from_void, void *to_void)
 {
   assert(from_void != nullptr);
   assert(to_void != nullptr);
@@ -83,4 +92,26 @@ void fill_w_poison(void * from_void, void * to_void)
 
   for (; from < to; ++from)
     *from = POISON_VAL;
+}
+
+bool stk_check_poison(void *from_void, void *to_void)
+{
+#ifdef STK_RELEASE_MODE
+
+  return true;
+
+#else
+
+  assert(from_void != nullptr);
+  assert(to_void != nullptr);
+
+  PoisonT *from = (PoisonT *)from_void;
+  PoisonT *to = (PoisonT *)to_void;
+
+  for (; from < to; ++from)
+    if (*from != POISON_VAL)
+      return false;
+  return true;
+
+#endif
 }

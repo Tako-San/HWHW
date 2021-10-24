@@ -11,7 +11,7 @@ void stk_print_elem(int)(const int *elem_ptr)
 define_stack(double);
 void stk_print_elem(double)(const double *elem_ptr)
 {
-  printf("%lf", *elem_ptr);
+  printf("%le", *elem_ptr);
 }
 
 int test();

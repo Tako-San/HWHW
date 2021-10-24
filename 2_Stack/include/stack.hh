@@ -20,7 +20,8 @@ enum StkErrCode
   STK_STRUCT_HASH_DAMAGED,
   STK_DATA_HASH_DAMAGED,
   STK_FUNC_HASH_DAMAGED,
-  STK_EMPTY
+  STK_EMPTY,
+  STK_POISON_CHANGED
 };
 
 bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2);
@@ -28,7 +29,9 @@ bool stk_check_canaries(CanaryT can1, CanaryT can2, CanaryT owl1, CanaryT owl2);
 bool stk_check_hash(HashT hash, const void *from, const void *to);
 HashT stk_hash_calc(const void *from_void, const void *to_void);
 
-void fill_w_poison(void * from_void, void * to_void);
+bool stk_check_poison(void *from_void, void *to_void);
+void stk_fill_w_poison(void *from_void, void *to_void);
+
 const char *stk_err_descr(StkErrCode ec);
 
 const CanaryT stk_can1_val = 0xACABBACA;
@@ -90,6 +93,8 @@ extern FILE *STK_ERR;
       return STK_FUNC_HASH_DAMAGED;                                                                                    \
     if (!stk_check_hash(stk->struct_hash_, &(stk->size_), &(stk->struct_hash_)))                                       \
       return STK_STRUCT_HASH_DAMAGED;                                                                                  \
+    if (!stk_check_poison(stk->data_ + stk->size_, stk->data_ + stk->capacity_))                                       \
+      return STK_POISON_CHANGED;                                                                                       \
                                                                                                                        \
     return STK_OK;                                                                                                     \
   }                                                                                                                    \
@@ -155,7 +160,7 @@ extern FILE *STK_ERR;
     stk->capacity_ = new_size * sizeof(CanaryT) / sizeof(type);                                                        \
     stk->data_ = (type *)(mem_ptr + 1);                                                                                \
                                                                                                                        \
-    fill_w_poison(stk->data_ + stk->size_, stk->data_ + stk->capacity_);                                               \
+    stk_fill_w_poison(stk->data_ + stk->size_, stk->data_ + stk->capacity_);                                           \
     stk_hash_recalc_##type(stk);                                                                                       \
     return STK_OK;                                                                                                     \
   }                                                                                                                    \
@@ -276,6 +281,14 @@ extern FILE *STK_ERR;
     fputs("\n", fstream);                                                                                              \
     fputs("Stack data. Finally.\n", fstream);                                                                          \
     for (size_t i = 0; i < stk->size_; ++i)                                                                            \
+    {                                                                                                                  \
+      fprintf(fstream, "data[%ld]: ", i);                                                                              \
+      stk_print_elem_##type(stk->data_ + i);                                                                           \
+      fputs("\n", fstream);                                                                                            \
+    }                                                                                                                  \
+    fputs("\n", fstream);                                                                                              \
+    fputs("Data finished. Here comes poison.\n", fstream);                                                             \
+    for (size_t i = stk->size_; i < stk->capacity_; ++i)                                                               \
     {                                                                                                                  \
       fprintf(fstream, "data[%ld]: ", i);                                                                              \
       stk_print_elem_##type(stk->data_ + i);                                                                           \
