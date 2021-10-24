@@ -105,7 +105,7 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                      \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                      \
       return true;                                                                                                     \
     }                                                                                                                  \
                                                                                                                        \
@@ -117,7 +117,7 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                      \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                      \
       return 0;                                                                                                        \
     }                                                                                                                  \
                                                                                                                        \
@@ -129,7 +129,7 @@ extern FILE *STK_ERR;
     StkErrCode ec = stk_is_valid_##type(stk);                                                                          \
     if (ec != STK_OK)                                                                                                  \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_err_descr(ec));                                                                       \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(ec));                                                                       \
       return ec;                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -140,7 +140,10 @@ extern FILE *STK_ERR;
     if (nullptr == mem_ptr)                                                                                            \
     {                                                                                                                  \
       free(stk->owl1_);                                                                                                \
-      fprintf(STK_ERR, "%s", stk_err_descr(ec));                                                                       \
+      stk->owl1_ = nullptr;                                                                                            \
+      stk->owl2_ = nullptr;                                                                                            \
+      stk->data_ = nullptr;                                                                                            \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(ec));                                                                       \
       return STK_MEMORY_ALLOCATION_ERROR;                                                                              \
     }                                                                                                                  \
                                                                                                                        \
@@ -159,7 +162,7 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                      \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                      \
       return;                                                                                                          \
     }                                                                                                                  \
                                                                                                                        \
@@ -168,7 +171,7 @@ extern FILE *STK_ERR;
       *ec = stk_realloc_##type(stk, 2 * stk->size_ + 1);                                                               \
       if (*ec != STK_OK)                                                                                               \
       {                                                                                                                \
-        fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                    \
+        fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
         return;                                                                                                        \
       }                                                                                                                \
     }                                                                                                                  \
@@ -183,14 +186,14 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                      \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                      \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
     if (stk->size_ == 0)                                                                                               \
     {                                                                                                                  \
       *ec = STK_EMPTY;                                                                                                 \
-      fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                      \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                      \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -200,14 +203,14 @@ extern FILE *STK_ERR;
       *ec = stk_realloc_##type(stk, third_cap);                                                                        \
       if (*ec != STK_OK)                                                                                               \
       {                                                                                                                \
-        fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                    \
+        fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
         return {};                                                                                                     \
       }                                                                                                                \
                                                                                                                        \
       if (nullptr == stk->data_)                                                                                       \
       {                                                                                                                \
         *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                             \
-        fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                    \
+        fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                    \
         return {};                                                                                                     \
       }                                                                                                                \
     }                                                                                                                  \
@@ -222,14 +225,14 @@ extern FILE *STK_ERR;
     *ec = stk_is_valid_##type(stk);                                                                                    \
     if (*ec != STK_OK)                                                                                                 \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                      \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                      \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
     if (stk->size_ == 0)                                                                                               \
     {                                                                                                                  \
       *ec = STK_EMPTY;                                                                                                 \
-      fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                      \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                      \
       return {};                                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
@@ -305,7 +308,7 @@ extern FILE *STK_ERR;
   {                                                                                                                    \
     if (nullptr == stk)                                                                                                \
     {                                                                                                                  \
-      fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                      \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                      \
       *ec = STK_IS_NULLPTR;                                                                                            \
       return;                                                                                                          \
     }                                                                                                                  \
@@ -320,7 +323,7 @@ extern FILE *STK_ERR;
     if (stk->owl1_ == nullptr)                                                                                         \
     {                                                                                                                  \
       *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                               \
-      fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                      \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                      \
       return;                                                                                                          \
     }                                                                                                                  \
                                                                                                                        \
@@ -343,7 +346,7 @@ extern FILE *STK_ERR;
     if (nullptr == res)                                                                                                \
     {                                                                                                                  \
       *ec = STK_MEMORY_ALLOCATION_ERROR;                                                                               \
-      fprintf(STK_ERR, "%s", stk_err_descr(*ec));                                                                      \
+      fprintf(STK_ERR, "%s\n", stk_err_descr(*ec));                                                                      \
       return nullptr;                                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
