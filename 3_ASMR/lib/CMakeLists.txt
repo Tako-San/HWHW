@@ -1,5 +1,6 @@
 set(LIBLIST
   asm
+  tokenizer
 )
 
 foreach(LIB ${LIBLIST})
