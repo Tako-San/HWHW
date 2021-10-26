@@ -1,5 +1,5 @@
 set(LIBLIST
-# Add libs here
+  asm
 )
 
 foreach(LIB ${LIBLIST})

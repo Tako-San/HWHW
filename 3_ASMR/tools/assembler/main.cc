@@ -1,7 +1,14 @@
-#include <iostream>
+#include <cstdio>
 
-int main()
+#include <tsl.hh>
+
+int main(int argc, char **argv)
 {
-  std::cout << "assembler" << std::endl;
+  if (argc != 2)
+  {
+    std::printf("USAGE: %s INPUT_NAME\n", argv[0]);
+    return 1;
+  }
+
   return 0;
 }
