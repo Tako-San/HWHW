@@ -6,7 +6,7 @@ include(../cmake/clang_format.cmake)
 find_package(TLL REQUIRED)
 find_package(TSL REQUIRED)
 
-set(EXTERN_LIBS TSL::TSL TLL::TLL)
+set(EXTERN_LIBS TSL::TSL TSL::CharBuf TSL::FileSys TLL::TLL)
 
 add_subdirectory(lib)
 message(STATUS "Collected libs: ${LIBLIST}")
