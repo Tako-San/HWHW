@@ -22,7 +22,7 @@ add_subdirectory(tools)
 message(STATUS "Collected tools: ${TOOLLIST}")
 
 # include dir with Ded's warnings
-include(cmake/warns.cmake)
+include(../cmake/comp_flags.cmake)
 
 # link all libraries to every tool
 foreach(TOOL ${TOOLLIST})
