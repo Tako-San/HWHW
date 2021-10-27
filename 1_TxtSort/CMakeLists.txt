@@ -24,6 +24,9 @@ message(STATUS "Collected tools: ${TOOLLIST}")
 # include dir with Ded's warnings
 include(../cmake/comp_flags.cmake)
 
+find_package(TLL REQUIRED)
+find_package(TSL REQUIRED)
+
 # link all libraries to every tool
 foreach(TOOL ${TOOLLIST})
   # add the binary tree to the search path for include files
@@ -39,6 +42,6 @@ foreach(TOOL ${TOOLLIST})
   # specify standard
   target_compile_features(${TOOL} PRIVATE cxx_std_11)
 
-  target_link_libraries(${TOOL} ${LIBLIST})
+  target_link_libraries(${TOOL} ${LIBLIST} TSL::TSL TLL::TLL)
 endforeach()
 

@@ -1,31 +1,51 @@
 cmake_minimum_required(VERSION 3.14)
-
 project(TakoStrLib)
+
+# include dir with Ded's warnings
+include(../../cmake/comp_flags.cmake)
+
+# find logging library
+find_package(TLL REQUIRED)
 
 # indicate the documentation build
 option(BUILD_DOC "Build documentation" OFF)
 add_subdirectory(docs)
 
-# TSL - Tako's string library
-add_library(TSL tsl.cc)
+add_subdirectory(lib)
+message(STATUS "Collected libs: ${LIBLIST}")
 
-# link with CB library
-add_subdirectory(CharBuf)
-target_link_libraries(TSL CB)
+# common links and includes
+foreach(LIB ${LIBLIST})
+  # link with external library
+  target_link_libraries(${LIB} TLL::TLL)
 
-# link with TLL library
-find_package(TLL REQUIRED)
-target_link_libraries(TSL TLL::TLL)
+  # add sanitizers
+  target_link_options(${LIB} PRIVATE "$<$<CXX_COMPILER_ID:GNU>:$<$<CONFIG:Debug>:${DED_SAN_LST}>>")
+  target_compile_options(${LIB} PRIVATE "$<$<CXX_COMPILER_ID:GNU>:$<$<CONFIG:Debug>:${DED_SAN_LST}>>")
 
-# show where is header file
-set_target_properties(TSL PROPERTIES PUBLIC_HEADER "${CMAKE_SOURCE_DIR}/tsl.hh")
+  # add warnings
+  target_compile_options(${LIB} PRIVATE "$<$<CXX_COMPILER_ID:GNU>:$<$<CONFIG:Debug>:${DED_GCC_WARNS_LST}>>")
 
-target_include_directories(TSL PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  # specify standard
+  target_compile_features(${LIB} PRIVATE cxx_std_11)
+
+  # include directories for build and install modes
+  target_include_directories(${LIB} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/${LIB}>
     $<INSTALL_INTERFACE:include>
-)
+  )
+endforeach()
 
-install(TARGETS TSL CB EXPORT TSLTargets)
+# special links and includes
+target_link_libraries(FileSys CharBuf)
+target_include_directories(FileSys PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/CharBuf)
+
+target_link_libraries(TSL CharBuf)
+target_include_directories(TSL PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/CharBuf)
+
+# installation rules
+install(TARGETS ${LIBLIST} EXPORT TSLTargets)
 
 install(EXPORT TSLTargets
   FILE TSLTargets.cmake
