@@ -32,9 +32,7 @@ if (BUILD_DOC)
   set(DOXYGEN_FULL_PATH_NAMES NO)
 
   doxygen_add_docs(doc
-    "${CMAKE_SOURCE_DIR}/lib"
     "${CMAKE_SOURCE_DIR}/include"
-    "${CMAKE_SOURCE_DIR}"
     ALL
     COMMENT "Generate documentation"
   )
