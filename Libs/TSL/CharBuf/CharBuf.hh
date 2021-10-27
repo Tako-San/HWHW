@@ -37,6 +37,15 @@ struct StrArray
 CharBuf *cb_init(CharBuf *cb, size_t elem_num);
 
 /**
+ * @brief CharBuf copy constructor
+ *
+ * @param[out] cb_new pointer to uninitialized CharBuf
+ * @param[in] cb_old old CharBuf
+ * @return pointer to input CharBuf object
+ */
+CharBuf *cb_init(CharBuf *cb_new, const CharBuf *cb_old);
+
+/**
  * @brief CharBuf destructor
  *
  * @param[out] cb CharBuf object

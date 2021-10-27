@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "CharBuf.hh"
 
@@ -10,6 +11,17 @@ CharBuf *cb_init(CharBuf *cb, size_t elem_num)
   cb->buf = (char *)calloc(elem_num + 1, sizeof(char));
   cb->size = elem_num;
   return cb;
+}
+
+CharBuf *cb_init(CharBuf *cb_new, const CharBuf *cb_old)
+{
+  if ((nullptr == cb_new) || (nullptr == cb_old))
+    return nullptr;
+
+  cb_new->size = cb_old->size;
+  cb_new->buf = (char *)calloc(cb_new->size + 1, sizeof(char));
+  memcpy(cb_new->buf, cb_old->buf, cb_new->size + 1);
+  return cb_new;
 }
 
 CharBuf *cb_destr(CharBuf *cb)
