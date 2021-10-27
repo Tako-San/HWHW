@@ -240,8 +240,8 @@ StrArray tsl_split_lines(CharBuf raw)
 
 int tsl_cb_cmp(const void *lhs, const void *rhs)
 {
-  CharBuf l = *(CharBuf *)lhs;
-  CharBuf r = *(CharBuf *)rhs;
+  CharBuf l = *(const CharBuf *)lhs;
+  CharBuf r = *(const CharBuf *)rhs;
 
   char *lsym = l.buf;
   char *rsym = r.buf;
